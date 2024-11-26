@@ -1,7 +1,7 @@
 #################################################################################################################################
 ### (4) Quantify temperature extremes and offsets################################################################################
 #################################################################################################################################
-###updated 11-23-24
+###updated 11-26-24
 
 
 ## ***************************************************************************************************
@@ -15,22 +15,23 @@ theme_set(theme_bw())
 
 #Load all microclimate data (24 hr time series)
 # ddat <- read.csv("Data/cleaned_drop_data/drop_data_may_july_2024_24hrs_07.26.24.csv")
-ddat <- read.csv("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/Data/drop_data_may_sept_2024_24hrs_11.10.24.csv")
+ddat <- read.csv("Data/cleaned_drop_data/drop_data_may_sept_2024_24hrs_11.10.24.csv")
 dim(ddat) #303402  24
 
 #Load microclimate summary data (means, max, min, etc)
 #ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_07.26.24.csv")
-ddat_sum <- read.csv("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/Data/drop_data_2024_day_night_summaries_11.23.24.csv")
+ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv")
 dim(ddat_sum) #4042  21
 
 #Load weather station data
 #Data downloaded from here (selected Daily summaries): https://www.ncei.noaa.gov/cdo-web/
 #wdat <- read.csv("./Data/weather_station_data/annapolis_naval_acad_2000_2023_daily_11.6.23.csv")
+
 #Data from Baltimore
-wdat_bmore <- read.csv("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/Data/weather_station/baltimore_md_sci_ctr_2000_2024_daily_11.22.24.csv")
+wdat_bmore <- read.csv("Data/weather_station_data/baltimore_md_sci_ctr_2000_2024_daily_11.22.24.csv")
 dim(wdat_bmore) #8425  24
 #Data from Annapolis
-wdat_annap <- read.csv("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/Data/weather_station/annapolis_naval_acad_2000_2024_daily_11.22.24.csv")
+wdat_annap <- read.csv("Data/weather_station_data/annapolis_naval_acad_2000_2024_daily_11.22.24.csv")
 dim(wdat_annap) #8408  25
 
 ## ******************************************************************************************

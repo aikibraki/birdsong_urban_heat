@@ -1,7 +1,7 @@
 ###########################################################################################################################################################
 ###(1) Extracting and summarizing data from drop sensors##################################################################################################
 ########################################################################################################################################################
-###updated 11-22-24
+###updated 11-26-24
 #R version 4.3.1
 
 #Questions for Aidan:
@@ -55,14 +55,13 @@ library(lubridate) #lubridate_1.9.2
 
 
 #Load metadata files
-setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audiomoth_project_Julia")
-meta_dat <- read.csv("audiomoth_data_2024/SciFaith_Drop_metadata.csv")
+getwd()
+meta_dat <- read.csv("Data/audiomoth_data_2024/SciFaith_Drop_metadata.csv")
 #date_out <- read.csv("data/TOMST data/SERC_downloaded_Fall 2023/SERC_TMS4_datacollection_coords_Fall2023.csv")
 #sens_ids <- read.csv("data/TOMST data/SERCsensorIDs.csv")
 
-#set wd() to SSD 
-setwd("D:/Science and Faith Audio Files")
-
+# #set wd() to SSD 
+# setwd("D:/Science and Faith Audio Files")
 
 #Load TOMST data files (wrap into a function that gets filenames, checks for duplicates,
 #loads files into list and names columns)
@@ -77,23 +76,6 @@ sm <- paste("Stillmeadow", dir("Stillmeadow"), sep = "/")
 lg <- paste("LibertyGrace", dir("LibertyGrace"), sep = "/")
 
 sens.names <- c(serc, sm, sl, sh, lg)
-
-# sens <- c("SERC/NEON018_N18", "SERC/NEON008_N8",
-#           "SERC/NEON017_N17", "SERC/NEON007_N7",
-#           "SERC/NEON019_N19", "SERC/NEON009_N9",
-#           "SERC/NEON002_N2", "SERC/MuddyCreek_MC1",
-#           "Stillmeadow/Open_SMO9", "Stillmeadow/Classroom_SMC7",
-#           "Stillmeadow/Overlook_SMO6", "Stillmeadow/Pool_SMP11",
-#           "StLukes/Open1_SLO1", "StLukes/Forest2_SLF2",
-#           "StLukes/Forest3_SLR3", "SweetHope/SweetHope_SH4",
-#           "LibertyGrace/Back_LGB1")
-
-#Look at just a subset first (Stillmeadow)
-# sens <- c("Stillmeadow/Open_SMO9", 
-#           "Stillmeadow/Classroom_SMC7", 
-#           "Stillmeadow/Overlook_SMO6",
-#           "Stillmeadow/Pool_SMP11")
-
 
 filenames <- vector()
 sites.names <-vector()
