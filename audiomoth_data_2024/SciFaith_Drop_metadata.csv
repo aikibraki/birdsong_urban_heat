@@ -1,0 +1,132 @@
+Location,Site,Drop #,Deployment date,Deployment time,Collected date,Collected Time,SSD,DropBox,Deployment #,Battery Date,Notes
+SERC,NEON008,8291,4/9/2024,13:59,5/8/2024,13:02,x,x,1,,"Turned on in lab early (4/9/24, 10:26AM)"
+SERC,NEON018,8290,4/9/2024,14:25,5/8/2024,13:19,x,x,1,,Moved 10m ~south to get outside of the NEON plot
+SERC,NEON017,7973,4/9/2024,14:46,5/8/2024,13:35,x,x,1,,
+SERC,NEON007,7974,4/9/2024,15:12,5/8/2024,13:55,x,x,1,,Moved 15m ~east
+SERC,NEON019,8307,4/9/2024,15:46,5/8/2024,14:22,x,x,1,,
+SERC,NEON009,8308,4/10/2024,10:17,5/8/2024,15:26,x,x,1,,
+SERC,NEON002,8311,4/10/2024,10:31,5/8/2024,15:06,x,x,1,,Moved TMS 7m ~west; deployed to incorrect location originally
+SERC,muddy creek,7969,4/10/2024,10:50,5/8/2024,14:44,x,x,1,,
+Sweet Hope,Sweet Hope,7983,4/11/2024,10:27,5/11/2024,13:25,x,x,1,,Re-deployed 4/20/24 12:15pm -- after being taken down by grounds crew at Sweet Hope 4/15?/24
+Stillmeadow,open (SMOpen),7967,4/11/2024,12:52,5/7/2024,14:00,x,x,1,,
+Stillmeadow,classroom (SMClassroom),7956,4/11/2024,13:13,5/7/2024,14:14,x,x,1,,
+Stillmeadow,overlook (SMOverlook),8296,4/11/2024,13:18,5/7/2024,14:27,x,x,1,,
+Stillmeadow,pool (SMPool),8295,4/11/2024,13:35,5/7/2024,14:41,x,x,1,,
+St. Lukes,Open 1 (StLOpen2),7964,4/12/2024,10:17,5/10/2024,10:18,x,x,1,,
+St. Lukes,Forest 3 (StLForest3),8294,4/12/2024,10:23,5/10/2024,10:35,x,x,1,,Might need to replace device/battery; device didn't collect data for this period (full storage?)
+St. Lukes,Forest 2 (StLForest2),7958,4/12/2024,10:29,5/10/2024,10:47,x,x,1,,
+Stillmeadow,open (SMOpen),7967,5/7/2024,14:00,6/1/2024,9:05,x,x,2,,
+Stillmeadow,classroom (SMClassroom),7956,5/7/2024,14:14,6/1/2024,9:26,x,x,2,,
+Stillmeadow,overlook (SMOverlook),8296,5/7/2024,14:27,6/1/2024,9:41,x,x,2,,
+Stillmeadow,pool (SMPool),8295,5/7/2024,14:41,6/1/2024,9:58,x,x,2,,
+SERC,NEON008,8291,5/8/2024,13:02,6/5/2024,9:45,x,x,2,,
+SERC,NEON018,8290,5/8/2024,13:19,6/5/2024,9:55,x,x,2,,
+SERC,NEON017,7973,5/8/2024,13:35,6/5/2024,10:12,x,x,2,,
+SERC,NEON007,7974,5/8/2024,13:55,6/5/2024,10:36,x,x,2,,
+SERC,NEON019,8307,5/8/2024,14:22,6/5/2024,10:56,x,x,2,,
+SERC,muddy creek,7969,5/8/2024,14:44,6/5/2024,11:16,x,x,2,,
+SERC,NEON002,8311,5/8/2024,15:06,6/5/2024,12:02,x,x,2,,
+SERC,NEON009,8308,5/8/2024,15:26,6/5/2024,12:30,x,x,2,,
+St. Lukes,Open 1 (StLOpen2),7964,5/10/2024,10:18,6/6/2024,10:08,x,x,2,,
+St. Lukes,Forest 3 (StLForest3),8294,5/10/2024,10:35,6/6/2024,10:40,x,x,2,,
+St. Lukes,Forest 2 (StLForest2),7958,5/10/2024,10:47,6/6/2024,10:46,x,x,2,,
+Sweet Hope,Sweet Hope,7983,5/11/2024,13:25,6/1/2024,11:20,x,x,2,,
+Stillmeadow,open (SMOpen),7967,6/1/2024,9:05,6/15/2024,10:30,x,x,3,,
+Stillmeadow,classroom (SMClassroom),7956,6/1/2024,9:26,6/15/2024,10:36,x,x,3,,
+Stillmeadow,overlook (SMOverlook),8296,6/1/2024,9:41,6/15/2024,10:46,x,x,3,,Data only through May 18 - incomplete sync?
+Stillmeadow,pool (SMPool),8295,6/1/2024,9:58,6/15/2024,10:55,x,x,3,,Data only through May 18 - incomplete sync?
+Sweet Hope,Sweet Hope,7983,6/1/2024,11:20,6/15/2024,11:44,x,x,3,,
+SERC,NEON008,8291,6/5/2024,9:45,6/18/2024,10:40,x,x,3,,need wasp spray for inside the sunshield -- small active wasp nest
+SERC,NEON018,8290,6/5/2024,9:55,6/18/2024,10:16,x,x,3,,
+SERC,NEON017,7973,6/5/2024,10:12,6/18/2024,11:04,x,x,3,,LOW BATTERY
+SERC,NEON007,7974,6/5/2024,10:36,6/18/2024,11:48,x,x,3,,
+SERC,NEON019,8307,6/5/2024,10:56,6/18/2024,12:16,x,x,3,,
+SERC,muddy creek,7969,6/5/2024,11:16,6/18/2024,12:55,x,x,3,,
+SERC,NEON002,8311,6/5/2024,12:02,6/18/2024,13:15,x,x,3,,File stops on May 18 -- why?
+SERC,NEON009,8308,6/5/2024,12:30,6/18/2024,13:48,x,x,3,,
+St. Lukes,Open 1 (StLOpen2),7964,6/6/2024,10:08,6/18/2024,15:05,x,x,3,,Removed vines from inside sunshield; took 3 tries to sync
+St. Lukes,Forest 3 (StLForest3),8294,6/6/2024,10:40,6/18/2024,15:18,x,x,3,,
+St. Lukes,Forest 2 (StLForest2),7958,6/6/2024,10:46,6/18/2024,15:25,x,x,3,,
+Stillmeadow,open (SMOpen),7967,6/1/2024,9:05,6/10/2024,11:15,,,checkup,,
+Stillmeadow,classroom (SMClassroom),7956,6/1/2024,9:26,6/10/2024,11:25,,,checkup,,sunshield needs wasp spray
+Stillmeadow,overlook (SMOverlook),8296,6/1/2024,9:41,6/10/2024,11:37,,,checkup,,replaced battery
+Stillmeadow,pool (SMPool),8295,6/1/2024,9:58,6/10/2024,11:55,,,checkup,,"replaced battery, removed wasp nest"
+Sweet Hope,Sweet Hope,7983,6/1/2024,11:20,6/10/2024,12:41,,,checkup,,replaced battery
+St. Lukes,Open 1 (StLOpen2),7964,6/6/2024,10:08,6/10/2024,14:00,,,checkup,,
+St. Lukes,Forest 3 (StLForest3),8294,6/6/2024,10:40,6/10/2024,14:09,,,checkup,,
+St. Lukes,Forest 2 (StLForest2),7958,6/6/2024,10:46,6/10/2024,14:17,,,checkup,,sunshield and drop found on ground near stake; replaced and moved further from trail
+SERC,NEON008,8291,6/5/2024,9:45,6/11/2024,10:05,,,checkup,,replaced battery
+SERC,NEON018,8290,6/5/2024,9:55,6/11/2024,10:20,,,checkup,,replaced battery
+SERC,NEON017,7973,6/5/2024,10:12,6/11/2024,10:53,,,checkup,,replaced battery
+SERC,NEON007,7974,6/5/2024,10:36,6/11/2024,11:22,,,checkup,,replaced battery
+SERC,NEON019,8307,6/5/2024,10:56,6/11/2024,11:46,,,checkup,,
+SERC,muddy creek,7969,6/5/2024,11:16,6/11/2024,13:20,,,checkup,,replaced battery
+SERC,NEON002,8311,6/5/2024,12:02,6/11/2024,13:38,,,checkup,,replaced battery
+SERC,NEON009,8308,6/5/2024,12:30,6/11/2024,14:05,,,checkup,,
+St. Lukes,Open 1 (StLOpen2),7964,6/6/2024,10:08,6/11/2024,16:00,,,checkup,,replaced battery
+St. Lukes,Forest 3 (StLForest3),8294,6/6/2024,10:40,6/11/2024,16:20,,,checkup,,"small active wasp nest -- need spray, replacement battery"
+St. Lukes,Forest 2 (StLForest2),7958,6/6/2024,10:46,6/11/2024,16:25,,,checkup,,
+Stillmeadow,open (SMOpen),7967,6/15/2024,10:30,6/27/2024,12:07,x,x,4,,
+Stillmeadow,classroom (SMClassroom),7956,6/15/2024,10:36,6/27/2024,12:18,x,x,4,,
+Stillmeadow,overlook (SMOverlook),8296,6/15/2024,10:46,6/27/2024,12:29,x,x,4,,drop data looks a little funky -- check file
+Stillmeadow,pool (SMPool),8295,6/15/2024,10:55,6/27/2024,12:40,x,x,4,,
+Sweet Hope,Sweet Hope,7983,6/15/2024,11:44,6/27/2024,15:22,x,x,4,,
+SERC,NEON018,8290,6/5/2024,9:55,6/18/2024,10:16,,,checkup,,
+SERC,NEON008,8291,6/5/2024,9:45,6/18/2024,10:40,,,checkup,,
+SERC,NEON017,7973,6/5/2024,10:12,6/18/2024,11:04,,,checkup,6/18/2024,
+SERC,NEON007,7974,6/5/2024,10:36,6/18/2024,11:48,,,checkup,,
+SERC,NEON019,8307,6/5/2024,10:56,6/18/2024,12:16,,,checkup,,
+SERC,muddy creek,7969,6/5/2024,11:16,6/18/2024,12:55,,,checkup,,
+SERC,NEON002,8311,6/5/2024,12:02,6/18/2024,13:15,,,checkup,,
+SERC,NEON009,8308,6/5/2024,12:30,6/18/2024,13:48,,,checkup,,
+St. Lukes,Open 1 (StLOpen2),7964,6/6/2024,10:08,6/18/2024,15:05,,,checkup,,
+St. Lukes,Forest 3 (StLForest3),8294,6/6/2024,10:40,6/18/2024,15:18,,,checkup,6/18/2024,
+St. Lukes,Forest 2 (StLForest2),7958,6/6/2024,10:46,6/18/2024,15:25,,,checkup,,
+SERC,NEON018,8290,6/18/2024,10:16,7/8/2024,11:20,x,x,4,,
+SERC,NEON008,8291,6/18/2024,10:40,6/20/2024,10:45,x,x,4,,
+SERC,NEON017,7973,6/18/2024,11:04,7/8/2024,11:31,x,x,4,,
+SERC,NEON007,7974,6/18/2024,11:48,7/8/2024,11:47,x,x,4,,
+SERC,NEON019,8307,6/18/2024,12:16,7/8/2024,12:11,x,x,4,,
+SERC,muddy creek,7969,6/18/2024,12:55,7/8/2024,12:56,x,x,4,,
+SERC,NEON002,8311,6/18/2024,13:15,7/8/2024,13:15,x,x,4,,
+SERC,NEON009,8308,6/18/2024,13:48,7/8/2024,13:37,x,x,4,,
+St. Lukes,Open 1 (StLOpen2),7964,6/18/2024,15:05,7/9/2024,17:12,x,x,4,,
+St. Lukes,Forest 3 (StLForest3),8294,6/18/2024,15:18,6/20/2024,9:55,x,x,4,,
+St. Lukes,Forest 2 (StLForest2),7958,6/18/2024,15:25,7/9/2024,17:20,x,x,4,,
+St. Lukes,Forest 3 (StLForest3),3091,6/20/2024,9:55,7/9/2024,17:26,x,x,5,,replaced 8294 for 3091 at deployment 6/20/24
+SERC,NEON008,3449,6/20/2024,10:45,7/8/2024,11:12,x,x,5,,replaced 8291 for 3449 at deployment 6/20/24
+SERC,NEON008,3449,6/20/2024,10:45,6/24/2024,10:14,,,checkup,,
+SERC,NEON018,8290,6/18/2024,10:16,6/24/2024,10:20,,,checkup,,
+SERC,NEON017,7973,6/18/2024,11:04,6/24/2024,10:30,,,checkup,,
+SERC,NEON007,7974,6/18/2024,11:48,6/24/2024,10:45,,,checkup,,
+SERC,NEON019,8307,6/18/2024,12:16,6/24/2024,11:01,,,checkup,,
+SERC,muddy creek,7969,6/18/2024,12:55,6/24/2024,11:23,,,checkup,,
+SERC,NEON002,8311,6/18/2024,13:15,6/24/2024,11:36,,,checkup,,
+SERC,NEON009,8308,6/18/2024,13:48,6/24/2024,11:56,,,checkup,,
+St. Lukes,Open 1 (StLOpen2),7964,6/18/2024,15:05,6/24/2024,12:33,,,checkup,,
+St. Lukes,Forest 3 (StLForest3),3091,6/20/2024,9:55,6/24/2024,12:42,,,checkup,,"pole was tilting (maybe from loose ground), so I hammered it in a little deeper, but need a proper hammer next checkup to put it deeper"
+St. Lukes,Forest 2 (StLForest2),7958,6/18/2024,15:25,6/24/2024,12:48,,,checkup,,
+St. Lukes,Forest 3 (StLForest3),3091,6/20/2024,9:55,6/26/2024,14:01,,,checkup,,"placed drop+stake back in ground, they were found this morning by Chuck. It appears the pole snapped at the bottom"
+Stillmeadow,open (SMOpen),7967,6/27/2024,12:07,7/9/2024,12:17,x,x,5,,half battery
+Stillmeadow,classroom (SMClassroom),7956,6/27/2024,12:18,7/9/2024,12:28,x,x,5,,"low battery, but active wasp -- need smoker"
+Stillmeadow,overlook (SMOverlook),8296,6/27/2024,12:29,7/9/2024,12:41,x,x,5,,
+Stillmeadow,pool (SMPool),8295,6/27/2024,12:40,7/9/2024,12:49,x,x,5,,
+Liberty Grace,LGB1,3422,6/27/2024,14:30,7/9/2024,14:33,x,x,1,,
+Sweet Hope,Sweet Hope,7983,6/27/2024,15:22,7/9/2024,15:14,x,x,5,,
+SERC,NEON008,3449,7/8/2024,11:12,,,,,6,,
+SERC,NEON018,8290,7/8/2024,11:20,,,,,5,,
+SERC,NEON017,7973,7/8/2024,11:31,,,,,5,,
+SERC,NEON007,7974,7/8/2024,11:47,,,,,5,,
+SERC,NEON019,8307,7/8/2024,12:11,,,,,5,,
+SERC,muddy creek,7969,7/8/2024,12:56,,,,,5,,
+SERC,NEON002,8311,7/8/2024,13:15,,,,,5,,
+SERC,NEON009,8308,7/8/2024,13:37,,,,,5,,
+Stillmeadow,open (SMOpen),7967,7/9/2024,12:17,,,,,6,7/9/2024,
+Stillmeadow,classroom (SMClassroom),7956,7/9/2024,12:28,,,,,6,,
+Stillmeadow,overlook (SMOverlook),8296,7/9/2024,12:41,,,,,6,,
+Stillmeadow,pool (SMPool),8295,7/9/2024,12:49,,,,,6,,
+Liberty Grace,LGB1,3422,7/9/2024,14:33,,,,,2,,
+Sweet Hope,Sweet Hope,7983,7/9/2024,15:14,,,,,6,,
+St. Lukes,Open 1 (StLOpen2),7964,7/9/2024,17:12,,,,,5,,
+St. Lukes,Forest 3 (StLForest3),3091,7/9/2024,17:20,,,,,6,,
+St. Lukes,Forest 2 (StLForest2),7958,7/9/2024,17:26,,,,,5,,
