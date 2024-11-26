@@ -4,10 +4,10 @@
 # usethis::create_github_token()
 # Token Permissions:
 #   packages, gist, repo, user, workflow, write:packages, delete:packages
-# my temporary github token: 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
+# my temporary github token: my token goes here
 
 # gitcreds::gitcreds_set()
-# Sys.setenv(GITHUB_PAT = "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")
+# Sys.setenv(GITHUB_PAT = "my token here")
 
 # Info on token troubleshooting:
 #   https://sites.northwestern.edu/researchcomputing/resources/using-git-and-github-with-r-rstudio/
