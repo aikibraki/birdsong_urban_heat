@@ -399,7 +399,7 @@ summary(ddat_sum_c$date) # 0 NAs
 
 #save file
 #write.csv(ddat_sum_c, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_extrm_07.28.24.csv", row.names = FALSE)
-write.csv(ddat_sum_c, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/drop_data_2024_daytime_summaries_extrm_10.16.24.csv", row.names = FALSE)
+write.csv(ddat_sum_c, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_extrm_10.16.24.csv", row.names = FALSE)
 
 
 ## ******************************************************************************************

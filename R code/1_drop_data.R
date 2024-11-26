@@ -470,7 +470,7 @@ setwd("C:/Users/Nowak/Documents/JUSTIN - Active_Documents/SERC/Research Projects
 
 #write.csv(drop.df, "Data/cleaned_drop_data/drop_data_may_july_2024_24hrs_07.26.24.csv", row.names = FALSE)
 #write.csv(drop.df, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/drop_data_april_july_2024_24hrs_10.16.24.csv", row.names = FALSE)
-write.csv(drop.df, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/sm_drop_data_april_july_2024_24hrs_11.08.24.csv", row.names = FALSE)
+write.csv(drop.df, "Data/cleaned_drop_data/sm_drop_data_april_july_2024_24hrs_11.08.24.csv", row.names = FALSE)
 
 ## ******************************************************************************************
 ## Aggregate to daily metrics for each sensor
