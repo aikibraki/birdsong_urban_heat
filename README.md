@@ -1,11 +1,7 @@
-# birdsong_urban_heat
-**SERC Spatial Ecology and Conservation Laboratory** 2024
+# Bird Vocalizations and Urban Forest Heat Buffering
+**SERC Spatial Ecology and Conservation Laboratory**
 <br />
-<br />
-Science and Faith Project -- Bird Vocalizations and Urban Forest Heat Buffering
-<br />
+Science and Faith Project -- 2024
 <br />
 > [!NOTE]
-> Work in Progress
-
-test
+> **This repository is for code and data pertaining to the ongoing investigation into bird vocalization behavior and urban forest heat buffering. Documentation and code are under active development.**
