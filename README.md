@@ -1,4 +1,4 @@
-# Bird Vocalizations and Urban Forest Heat Buffering
+# Bird Vocalization and Urban Forest Heat Buffering
 **SERC Spatial Ecology and Conservation Laboratory**
 <br />
 Science and Faith Project -- 2024
