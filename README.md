@@ -3,5 +3,9 @@
 <br />
 Science and Faith Project -- 2024
 <br />
+<br />
+This repository is for code and data pertaining to the ongoing investigation into bird vocalization behavior and urban forest heat buffering. 
+<br />
+<br />
 > [!NOTE]
-> **This repository is for code and data pertaining to the ongoing investigation into bird vocalization behavior and urban forest heat buffering. Documentation and code are under active development.**
+> **Documentation and code are under active development.**
