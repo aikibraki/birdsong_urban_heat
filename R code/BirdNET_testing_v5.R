@@ -23,7 +23,7 @@ library(tidyverse)
 # library(ggExtra)
 # library(ggplot2)
 
-#
+
 # Format the .wav file titles ------------------------------------------
 # Do this before running through BirdNET Analyzer
 # wav files follow a SITEID_YYYYMMDD_HHMMSS naming convention
@@ -80,9 +80,6 @@ formatted.results <- birdnet_gather(results.directory = results_path_fm,
 
 # VALIDATION PIPELINE MK.2 -------------------------------------------------
 
-# Update this for each site
-base_path <- "D:/Science and Faith Audio Files/StLukes/Forest2_SLF2"
-
 # Function to get deployment folders
 get_deployment_folders <- function(base_path) {
   deployments <- list.dirs(base_path, recursive = FALSE)
@@ -95,6 +92,9 @@ get_deployment_folders <- function(base_path) {
   
   return(deployment_dates)
 }
+
+# Update this for each site
+base_path <- "D:/Science and Faith Audio Files/Stillmeadow/Pool_SMP11"
 
 # Get deployment folders
 all_deployments <- get_deployment_folders(base_path)
@@ -168,10 +168,6 @@ rm(formatted_results)
 # Filter by confidence >= 0.1 (also removes NAs)
 filt_p2_1 <- all_results_p2[all_results_p2$confidence >= 0.1, ]
 
-# Count # of observations of each species at confidence >= 0.1
-#species_p2 <- count(filt_p2_1, filt_p2_1$common_name, sort = TRUE)
-1+1
-
 ## Human Voice Scrubbing ---------------------------------------------------
 # TODO : have filt_h.1 pull filepath-start/end combos to limit loss of detections for validation
 
@@ -184,7 +180,14 @@ filt_g.1 <- filt_p1_1 %>%
 # filter filt.1 to keep only the filepaths without human vocal detection
 filt_h.1 <- filt_p2_1 %>%
   filter(!filepath %in% filt_g.1)
-rm(filt_g.1, filt_p1_1, filt_p2_1) # cleanup
+rm(filt_g.1, filt_p1_1) # cleanup
+
+
+# Count # of observations of each species at confidence >= 0.1
+species_p2 <- count(filt_p2_1, filt_p2_1$common_name, sort = TRUE)
+
+# Count # of observations of each species after scrubbing human voices
+species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 
 ## Validate Results --------------------------------------------------------
 # Create a random sample of N detections to verify
@@ -193,14 +196,13 @@ rm(filt_g.1, filt_p1_1, filt_p2_1) # cleanup
 # AMRO - DONE
 # CARW - DONE
 # TUTI - DONE
-# CACH - DONE
+# CACH - DONE + redone
 # AGOL - DONE
 # RBWO - DONE
 # BLJA - DONE
 
 set.seed(4)
-to_verify <- filt_h.1[common_name == "Blue Jay"][sample(.N, 50)]
-#to_verify <- filt_h.1[common_name == "Black-capped Chickadee"|common_name == "Carolina Chickadee"][sample(.N, 50)]
+to_verify <- filt_h.1[common_name == "Carolina Chickadee"][sample(.N, 41)]
 
 # Create a verification library
 ver_lib <- c('y', 'n', 'unsure')
@@ -212,8 +214,8 @@ results_directories <- dirname(to_verify$resultspath)
 # Create list to hold validation results
 verification_results <- vector("list", nrow(to_verify))
 
-# Note: having a project open will ensure you don't have to hunt down each temp audio file
-setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audiomoth_project_Julia")
+# Ensure you don't have to hunt down each temp audio file
+setwd("Data/validation_results_files")
 
 ## birdnet_verify ##
 for (i in 1:nrow(to_verify)) {
@@ -254,11 +256,11 @@ for (i in 1:nrow(to_verify)) {
 
 ### FIXME so it updates one spreadsheet instead of a new one for each species
 # maybe it already kinda does
-write_csv(all_results_p2, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/validation_results_files/SLF2results_BLJA.csv")
+setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/birdsong_heat_project_Aidan")
+write_csv(all_results_p2, "Data/validation_results_files/CACH/SMP11results_CACH.csv")
 1+1
-
 ## Set Confidence Thresholds -----------------------------------------------
-setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/validation_results_files/BLJA")
+setwd("Data/validation_results_files/CACH")
 
 temp = list.files(pattern = "*.csv")
 
@@ -342,6 +344,10 @@ pool_threshold_list <- pool_results_list %>%
     TRUE ~ as.character(confidence_bin[which(positive_rate >= 0.95)[1]])),
     total_detections = sum(total_detections),
     .groups = "drop")
+
+# Checking out how many CACH were validated at each site
+cach1 <- filter(pool_data, common_name == "Carolina Chickadee") %>%
+cach2 <- table(cach1$column_label)
 
 #   common_name            threshold_bin              total_detections
 # 1 American Goldfinch     0.24-0.25                  850
