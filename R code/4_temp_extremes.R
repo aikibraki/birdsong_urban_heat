@@ -56,17 +56,15 @@ ddat$datetime <- parse_date_time(ddat$date_time,
 summary(is.na(ddat$datetime)) #No NAs
 
 summary(as.character(ddat$datetime) == ddat$datetime2) #All match
-test <-  ddat$datetime == ddat$datetime2
 head(ddat)
 
-#reformat time elements
-drop_dt <- lapply(drop_dt, function(x) cbind(x, hour = as.POSIXlt(x$datetime)$hour))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, minute = as.POSIXlt(x$datetime)$min))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, month = as.POSIXlt(x$datetime)$mon+1))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, day = day(as.POSIXlt(x$datetime))))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, date = as.POSIXct(strftime(x$datetime, format="%Y-%m-%d"))))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, time = format(as.POSIXct(x$datetime), format = "%H:%M")))
-
+# #reformat time elements
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, hour = as.POSIXlt(x$datetime)$hour))
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, minute = as.POSIXlt(x$datetime)$min))
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, month = as.POSIXlt(x$datetime)$mon+1))
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, day = day(as.POSIXlt(x$datetime))))
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, date = as.POSIXct(strftime(x$datetime, format="%Y-%m-%d"))))
+# drop_dt <- lapply(drop_dt, function(x) cbind(x, time = format(as.POSIXct(x$datetime), format = "%H:%M")))
 
 #Re-Check that all hour intervals are 15 min 
 tdiff_chk <- as.data.frame(table(diff(ddat[ , "datetime"], lag = 1)))
@@ -96,7 +94,7 @@ ddat_sum$year      <- year(as.POSIXlt(ddat_sum$date))
 
 summary(ddat_sum$date)
 summary(is.na(ddat_sum$date))
-range(ddat_sum$date) #"2024-04-13 UTC" "2024-07-08 UTC"
+range(ddat_sum$date) #"2024-05-15 UTC" "2024-09-20 UTC"
 
 
 #Weather station data-------------------------------------------------------------
@@ -270,10 +268,9 @@ sd_max_bmore <-
 # 2SD:35.39573
 
 
-
 #Identify extremes in weather station dataset [TABLED] ---------------------------
 
-# Annapolis weather station extremes
+# Annapolis weather station extremes (1.5 SD)
 wdat_annap_24$ext_tmax <- ifelse(
   wdat_annap_24$month == 5 & wdat_annap_24$TMAX >= 29.64382, 1,
   ifelse(wdat_annap_24$month == 6 & wdat_annap_24$TMAX >= 32.75243, 1,
@@ -286,7 +283,7 @@ wdat_annap_24$ext_tmax <- ifelse(
     )
   )
 
-# Baltimore weather station extremes
+# Baltimore weather station extremes (1.5 SD)
 wdat_bmore_24$ext_tmax <- ifelse(
   wdat_bmore_24$month == 5 & wdat_bmore_24$TMAX >= 32.27780, 1,
   ifelse(wdat_bmore_24$month == 6 & wdat_bmore_24$TMAX >= 35.66651, 1,
