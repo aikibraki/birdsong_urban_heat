@@ -94,7 +94,7 @@ get_deployment_folders <- function(base_path) {
 }
 
 # Update this for each site
-base_path <- "D:/Science and Faith Audio Files/Stillmeadow/Pool_SMP11"
+base_path <- "D:/Science and Faith Audio Files/SERC/MuddyCreek_MC1"
 
 # Get deployment folders
 all_deployments <- get_deployment_folders(base_path)
@@ -188,6 +188,8 @@ species_p2 <- count(filt_p2_1, filt_p2_1$common_name, sort = TRUE)
 
 # Count # of observations of each species after scrubbing human voices
 species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
+
+#write_csv(species_filt, "Data/filtered_counts/MC1filt.csv")
 
 ## Validate Results --------------------------------------------------------
 # Create a random sample of N detections to verify
