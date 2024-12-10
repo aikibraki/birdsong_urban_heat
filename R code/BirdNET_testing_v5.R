@@ -94,7 +94,7 @@ get_deployment_folders <- function(base_path) {
 }
 
 # Update this for each site
-base_path <- "D:/Science and Faith Audio Files/SERC/MuddyCreek_MC1"
+base_path <- "D:/Science and Faith Audio Files/StLukes/Forest3_SLR3"
 
 # Get deployment folders
 all_deployments <- get_deployment_folders(base_path)
@@ -189,7 +189,7 @@ species_p2 <- count(filt_p2_1, filt_p2_1$common_name, sort = TRUE)
 # Count # of observations of each species after scrubbing human voices
 species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 
-#write_csv(species_filt, "Data/filtered_counts/MC1filt.csv")
+write_csv(species_filt, "Data/filtered_counts/SLR3filt.csv")
 
 ## Validate Results --------------------------------------------------------
 # Create a random sample of N detections to verify
@@ -365,7 +365,6 @@ cach2 <- table(cach1$column_label)
 
 # Counts by site ----------------------------------------------------------
 
-
 counts_dir <- 'Data/filtered_counts'
 
 # List the csv files in the directory
@@ -397,7 +396,7 @@ all_site_data <- all_site_data %>%
   )
 
 # Print the resulting dataframe
-print(wide_data)
+print(all_site_data)
 
 #write_csv(all_site_data, "Data/serc_bird_detections.csv")
 
