@@ -362,6 +362,45 @@ cach2 <- table(cach1$column_label)
 # 8 Red-bellied Woodpecker 0.27-0.28                  848
 # 9 Tufted Titmouse        0.22-0.23                  850
 
+
+# Counts by site ----------------------------------------------------------
+
+
+counts_dir <- 'Data/filtered_counts'
+
+# List the csv files in the directory
+count_files <- list.files(path = counts_dir, pattern = "\\.csv$", full.names = TRUE)
+
+# Read each csv and add a site name column
+read_site_csv <- function(file_path) {
+  # Extract site name from filename
+  site_name <- tools::file_path_sans_ext(basename(file_path))
+  # Read the csv
+  df <- read_csv(file_path, col_names = c("species", "detections"), skip = 1)
+  # Add site name column
+  df$site <- site_name
+  return(df)
+}
+
+# Read CSV files
+all_site_data <- lapply(count_files, read_site_csv)
+
+# Combine dfs
+all_site_data <- do.call(rbind, all_site_data)
+
+# Pivot the data to wide format
+all_site_data <- all_site_data %>%
+  pivot_wider(
+    names_from = site, 
+    values_from = detections, 
+    values_fill = 0  # Fill missing values with 0 if a species is not detected in a site
+  )
+
+# Print the resulting dataframe
+print(wide_data)
+
+#write_csv(all_site_data, "Data/serc_bird_detections.csv")
+
 # Boneyard -----------------------------------------------------------------
 ## Species counts ----------------------------------------------------------
 
