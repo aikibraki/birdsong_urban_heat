@@ -189,7 +189,7 @@ species_p2 <- count(filt_p2_1, filt_p2_1$common_name, sort = TRUE)
 # Count # of observations of each species after scrubbing human voices
 species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 
-write_csv(species_filt, "Data/filtered_counts/SLR3filt.csv")
+#write_csv(species_filt, "Data/filtered_counts/SLR3filt.csv")
 
 ## Validate Results --------------------------------------------------------
 # Create a random sample of N detections to verify
@@ -374,10 +374,15 @@ count_files <- list.files(path = counts_dir, pattern = "\\.csv$", full.names = T
 read_site_csv <- function(file_path) {
   # Extract site name from filename
   site_name <- tools::file_path_sans_ext(basename(file_path))
+  # Categorize sites as exurban vs. urban
+  site_type <- ifelse(
+    grepl("^N", site_name) | grepl("^MC", site_name),
+    "exurban", "urban")
   # Read the csv
   df <- read_csv(file_path, col_names = c("species", "detections"), skip = 1)
   # Add site name column
   df$site <- site_name
+  df$site_type <- site_type
   return(df)
 }
 
@@ -387,8 +392,28 @@ all_site_data <- lapply(count_files, read_site_csv)
 # Combine dfs
 all_site_data <- do.call(rbind, all_site_data)
 
+################################################################
+
+habitat_analysis <- all_site_data %>%
+  group_by(species, site_type) %>%
+  # Sum detections for each species in each habitat type
+  summarise(total_detections = sum(detections), .groups = "drop") %>%
+  # Spread to wide format
+  pivot_wider(
+    names_from = site_type,
+    values_from = total_detections,
+    values_fill = 0) %>%
+  filter(exurban > 10) %>% 
+  mutate(
+    log_urban = log(urban),
+    log_exurban = log(exurban),
+    exurban_urban_ratio = exurban/urban,
+  )
+
+################################################################
+
 # Pivot the data to wide format
-all_site_data <- all_site_data %>%
+all_site_wide <- all_site_data %>%
   pivot_wider(
     names_from = site, 
     values_from = detections, 
@@ -396,9 +421,9 @@ all_site_data <- all_site_data %>%
   )
 
 # Print the resulting dataframe
-print(all_site_data)
+print(all_site_wide)
 
-#write_csv(all_site_data, "Data/serc_bird_detections.csv")
+#write_csv(all_site_wide, "Data/serc_bird_detections.csv")
 
 # Boneyard -----------------------------------------------------------------
 ## Species counts ----------------------------------------------------------
