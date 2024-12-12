@@ -94,7 +94,7 @@ get_deployment_folders <- function(base_path) {
 }
 
 # Update this for each site
-base_path <- "D:/Science and Faith Audio Files/StLukes/Forest3_SLR3"
+base_path <- "D:/Science and Faith Audio Files/SERC/NEON017_N17"
 
 # Get deployment folders
 all_deployments <- get_deployment_folders(base_path)
@@ -202,9 +202,13 @@ species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 # AGOL - DONE
 # RBWO - DONE
 # BLJA - DONE
+# PIWO - in progress
+
+# the files update with all previous species' validations, so need to use most recent:
+# use CACH files for urban sites, and PIWO for SERC sites
 
 set.seed(4)
-to_verify <- filt_h.1[common_name == "Carolina Chickadee"][sample(.N, 41)]
+to_verify <- filt_h.1[common_name == "Pileated Woodpecker"][sample(.N, 50)]
 
 # Create a verification library
 ver_lib <- c('y', 'n', 'unsure')
@@ -259,7 +263,7 @@ for (i in 1:nrow(to_verify)) {
 ### FIXME so it updates one spreadsheet instead of a new one for each species
 # maybe it already kinda does
 setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/birdsong_heat_project_Aidan")
-write_csv(all_results_p2, "Data/validation_results_files/CACH/SMP11results_CACH.csv")
+write_csv(all_results_p2, "Data/validation_results_files/PIWO/N17results_PIWO.csv")
 1+1
 ## Set Confidence Thresholds -----------------------------------------------
 setwd("Data/validation_results_files/CACH")
@@ -392,8 +396,6 @@ all_site_data <- lapply(count_files, read_site_csv)
 # Combine dfs
 all_site_data <- do.call(rbind, all_site_data)
 
-################################################################
-
 habitat_analysis <- all_site_data %>%
   group_by(species, site_type) %>%
   # Sum detections for each species in each habitat type
@@ -404,13 +406,7 @@ habitat_analysis <- all_site_data %>%
     values_from = total_detections,
     values_fill = 0) %>%
   filter(exurban > 10) %>% 
-  mutate(
-    log_urban = log(urban),
-    log_exurban = log(exurban),
-    exurban_urban_ratio = exurban/urban,
-  )
-
-################################################################
+  mutate(exurban_urban_ratio = exurban/urban)
 
 # Pivot the data to wide format
 all_site_wide <- all_site_data %>%
