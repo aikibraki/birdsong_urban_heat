@@ -1,7 +1,7 @@
-#################################################################################################################################
-### (4) Quantify temperature extremes and offsets################################################################################
-#################################################################################################################################
-###updated 11-26-24
+###########################################################################################################################################################
+### (4) Quantify temperature extremes and offsets##########################################################################################
+########################################################################################################################################################
+###updated 12-10-24
 
 
 ## ***************************************************************************************************
@@ -14,57 +14,55 @@ library(ggplot2)
 theme_set(theme_bw())
 
 #Load all microclimate data (24 hr time series)
-# ddat <- read.csv("Data/cleaned_drop_data/drop_data_may_july_2024_24hrs_07.26.24.csv")
 ddat <- read.csv("Data/cleaned_drop_data/drop_data_may_sept_2024_24hrs_11.10.24.csv")
-dim(ddat) #303402  24
+dim(ddat) #303402     24
 
 #Load microclimate summary data (means, max, min, etc)
-#ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_07.26.24.csv")
-ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv")
-dim(ddat_sum) #4042  21
+ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_11.10.24.csv")
+dim(ddat_sum) #2013   20
+
+# dndat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv")
+# dim(dndat_sum) #4042   21
 
 #Load weather station data
 #Data downloaded from here (selected Daily summaries): https://www.ncei.noaa.gov/cdo-web/
-#wdat <- read.csv("./Data/weather_station_data/annapolis_naval_acad_2000_2023_daily_11.6.23.csv")
+#Go to data tools -> Find a station and search for city: https://www.ncei.noaa.gov/cdo-web/datatools/findstation
+#Data from Annapolis (closest to both SERC and Annapolis)
 
 #Data from Baltimore
 wdat_bmore <- read.csv("Data/weather_station_data/baltimore_md_sci_ctr_2000_2024_daily_11.22.24.csv")
-dim(wdat_bmore) #8425  24
+dim(wdat_bmore) #8245  24
 #Data from Annapolis
 wdat_annap <- read.csv("Data/weather_station_data/annapolis_naval_acad_2000_2024_daily_11.22.24.csv")
 dim(wdat_annap) #8408  25
+
 
 ## ******************************************************************************************
 ## Format/reformat time stamps
 ## ******************************************************************************************
 
 library(lubridate)
+library(anytime)
 
 colnames(ddat)
 str(ddat)
 
-#24 hr Microclimate data*********************************************************************
+#24 hr Microclimate data------------------------------------------------------------
 #Reconvert timestamp to posixct and calculate local time (saving as/loading csv messes with format)
 
 ddat$datetime2 <- ddat$datetime
-summary(is.na(ddat$datetime2)) #No NAs
+summary(is.na(ddat$datetime)) #No NAs
+summary(is.na(ddat$date_time)) #No NAs
+
+ddat$datetime <- anytime(ddat$datetime)
 #ddat$datetime = as.POSIXct(ddat$datetime2, format='%Y-%m-%d %H:%M:%S')
-#ddat$datetime <- parse_date_time(ddat$date_time, '%Y-%m-%d %H:%M:%S %p') -- old solution, creates NAs
-ddat$datetime <- parse_date_time(ddat$date_time, 
-                                 orders = c('mdy HM', 
-                                            'Ymd HMS p'))
+#ddat$datetime <- parse_date_time(ddat$date_time, '%Y-%m-%d %H:%M:%S %p')
 summary(is.na(ddat$datetime)) #No NAs
 
 summary(as.character(ddat$datetime) == ddat$datetime2) #All match
-head(ddat)
+ddat[10000:11000 , c("datetime2", "datetime", "date_time")]
+str(ddat)
 
-# #reformat time elements
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, hour = as.POSIXlt(x$datetime)$hour))
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, minute = as.POSIXlt(x$datetime)$min))
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, month = as.POSIXlt(x$datetime)$mon+1))
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, day = day(as.POSIXlt(x$datetime))))
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, date = as.POSIXct(strftime(x$datetime, format="%Y-%m-%d"))))
-# drop_dt <- lapply(drop_dt, function(x) cbind(x, time = format(as.POSIXct(x$datetime), format = "%H:%M")))
 
 #Re-Check that all hour intervals are 15 min 
 tdiff_chk <- as.data.frame(table(diff(ddat[ , "datetime"], lag = 1)))
@@ -82,289 +80,254 @@ for (i in sites) {
 }
 #most look ok... a few weird intervals to look into (may be just data gaps)
 summary(ddat$temp_c) #No NAs
+range(ddat$datetime) #"2024-05-15 04:00:00 EDT" "2024-09-20 04:00:00 EDT"
+
 
 #Microclimate summary data--------------------------------------------------------***********
 #Reconvert timestamp to posixct and calculate local time (saving as/loading csv messes with format)
 
 ddat_sum$date_orig <- ddat_sum$date
-ddat_sum$date      <- as.POSIXct(ddat_sum$date, format='%Y-%m-%d', tz = "UTC")
-ddat_sum$month     <- as.POSIXlt(ddat_sum$date)$mon+1
-ddat_sum$day       <- day(as.POSIXlt(ddat_sum$date))
-ddat_sum$year      <- year(as.POSIXlt(ddat_sum$date))
+ddat_sum$date <- as.POSIXct(ddat_sum$date, format='%Y-%m-%d', tz = "UTC")
+ddat_sum$month <- as.POSIXlt(ddat_sum$date)$mon+1
+ddat_sum$day <- day(as.POSIXlt(ddat_sum$date))
+ddat_sum$year <- year(as.POSIXlt(ddat_sum$date))
 
+summary(as.character(ddat_sum$date) == ddat_sum$date_orig) #All Match
 summary(ddat_sum$date)
 summary(is.na(ddat_sum$date))
-range(ddat_sum$date) #"2024-05-15 UTC" "2024-09-20 UTC"
+range(ddat_sum$date) #"2024-05-15 UTC" "2024-09-19 UTC"
+colnames(ddat_sum)
+ddat_sum[ , c("date_orig", "date", "month")]
 
 
-#Weather station data-------------------------------------------------------------
-
-##Annapolis Weather Station ------------------------------------------------------
+#Weather station data------------------------------------------------------------
 
 colnames(wdat_annap)
-head(wdat_annap)
-str(wdat_annap)
-
-wdat_annap$date  <- as.POSIXct(wdat_annap$DATE, format='%Y-%m-%d', tz = "UTC")
-wdat_annap$month <- as.POSIXlt(wdat_annap$date)$mon+1
-wdat_annap$day   <- day(as.POSIXlt(wdat_annap$date))
-wdat_annap$year  <- year(as.POSIXlt(wdat_annap$date))
-
-summary(wdat_annap$date)
-summary(is.na(wdat_annap$date))
-range(wdat_annap$date) #"2001-10-11 UTC" "2024-11-01 UTC"
-
-#Subset to desired date and time range 
-summary(ddat$month)
-#For study months from 2002 to 2022 (May, June, July - so far. Need to update later)
-#Based on meteorological summer - June, July, August: https://www.ncei.noaa.gov/news/meteorological-versus-astronomical-seasons
-wdat_annap_sub <- subset(wdat_annap, month >= 5 & month <= 9)
-wdat_annap_24  <- subset(wdat_annap_sub, year == 2024) #data from 2024
-wdat_annap_sub <- subset(wdat_annap_sub, year < 2024) #data pre-2024
-summary(wdat_annap_sub$month)
-range(wdat_annap_sub$date) #"2002-05-01 UTC" "2023-09-30 UTC"
-dim(wdat_annap_sub) #3361  29
-
-
-#Calculate mean and SD of maximum daily temperatures during summer months of 2000-2023
-
-#Calculate max daily temperature
-mean_max_annap <-
-  aggregate(
-    list(TMAX_mn = wdat_annap_sub$TMAX),
-    by = list(
-      month = wdat_annap_sub$month
-    ),
-    FUN = function(x) mean(x, na.rm = TRUE)
-  ) #include na.rm if NAs in data
-
-sd_max_annap <-
-  aggregate(
-    list(TMAX_mn = wdat_annap_sub$TMAX),
-    by = list(
-      month = wdat_annap_sub$month
-    ),
-    FUN = function(x) sd(x, na.rm = TRUE)
-  ) #include na.rm if NAs in data
-
-
-#### Annapolis Mean & SD max temps ####
-# > mean_max
-# month  TMAX_mn
-# 5      22.70675
-# 6      27.55544
-# 7      30.16283
-# 8      29.13087
-# 9      25.74682
-# > sd_max
-# month  TMAX_mn
-# 5      4.624714 * 1.5 = 6.937071
-# 6      3.464658 * 1.5 = 5.196987
-# 7      2.756060 * 1.5 = 4.134090
-# 8      2.709802 * 1.5 = 4.064703
-# 9      3.442496 * 1.5 = 5.163744
-
-# May
-#Upper threshold: 22.70675 + 6.937071 = 29.64382
-# 2SD:31.95618
-
-# June
-#Upper threshold: 27.55544 + 5.196987 = 32.75243
-# 2SD:34.48476
-
-# July
-#Upper threshold: 30.16283 + 4.134090 = 34.29692
-# 2SD:35.67495
-
-# August
-#Upper threshold: 29.13087 + 4.064703 = 33.19557
-# 2SD:34.55047
-
-# September
-#Upper threshold: 25.74682 + 5.163744 = 30.91056
-# 2SD:32.63181
-
-##Baltimore Weather Station ------------------------------------------------------
-
 colnames(wdat_bmore)
-head(wdat_bmore)
-str(wdat_bmore)
+head(wdat_annap)
+str(wdat)
 
-wdat_bmore$date  <- as.POSIXct(wdat_bmore$DATE, format='%Y-%m-%d', tz = "UTC")
-wdat_bmore$month <- as.POSIXlt(wdat_bmore$date)$mon+1
-wdat_bmore$day   <- day(as.POSIXlt(wdat_bmore$date))
-wdat_bmore$year  <- year(as.POSIXlt(wdat_bmore$date))
+met.format <- function(wdat) {
+  
+  wdat$date <- as.POSIXct(wdat$DATE, format = '%Y-%m-%d', tz = "UTC")
+  wdat$month <- as.POSIXlt(wdat$date)$mon + 1
+  wdat$day <- day(as.POSIXlt(wdat$date))
+  wdat$year <- year(as.POSIXlt(wdat$date))
+  
+  wdat_sub <- subset(wdat, month >= 5 & month <= 9)
+  wdat_sub <- subset(wdat_sub, year >= 2002)
+  
+  return(wdat_sub)
+  
+}
 
-summary(wdat_bmore$date)
-summary(is.na(wdat_bmore$date))
-range(wdat_bmore$date) #"2000-01-01 UTC" "2024-11-01 UTC"
+w_annap <- met.format(wdat_annap)
+w_bmore <- met.format(wdat_bmore)
 
-#Subset to desired date and time range 
-summary(ddat$month)
-wdat_bmore_sub <- subset(wdat_bmore, month >= 5 & month <= 9)
-wdat_bmore_24  <- subset(wdat_bmore_sub, year == 2024) #data from 2024
-wdat_bmore_sub <- subset(wdat_bmore_sub, year < 2024) #data pre-2024
-summary(wdat_bmore_sub$month)
-range(wdat_bmore_sub$date) #"2000-05-01 UTC" "2023-09-30 UTC"
-dim(wdat_bmore_sub) #3285   28
+summary(is.na(w_annap$date))
+summary(w_annap$month)
+range(w_annap$date) #"2002-05-01 UTC" "2024-09-30 UTC"
+dim(w_annap) #3513   29
 
-
-#Calculate mean and SD of maximum daily temperatures during summer months of 2000-2023
-
-#Calculate max daily temperature
-mean_max_bmore <-
-  aggregate(
-    list(TMAX_mn = wdat_bmore_sub$TMAX),
-    by = list(
-      month = wdat_bmore_sub$month
-    ),
-    FUN = function(x) mean(x, na.rm = TRUE)
-  ) #include na.rm if NAs in data
-
-sd_max_bmore <-
-  aggregate(
-    list(TMAX_mn = wdat_bmore_sub$TMAX),
-    by = list(
-      month = wdat_bmore_sub$month
-    ),
-    FUN = function(x) sd(x, na.rm = TRUE)
-  ) #include na.rm if NAs in data
+summary(is.na(w_bmore$date))
+summary(w_bmore$month)
+range(w_bmore$date) #"2002-05-01 UTC" "2024-09-30 UTC"
+dim(w_bmore) #3132   28
 
 
-#### Baltimore Mean & SD max temps ####
-# > mean_max
-# month  TMAX_mn
-# 5      24.36041
-# 6      29.55497
-# 7      32.01782
-# 8      30.82417
-# 9      27.10977
-# > sd_max
-# month  TMAX_mn
-# 5      5.278262 * 1.5 = 7.917393
-# 6      4.074362 * 1.5 = 6.111543
-# 7      3.372170 * 1.5 = 5.058255
-# 8      3.230699 * 1.5 = 4.846049
-# 9      4.142979 * 1.5 = 6.214469
 
-# May
-#Upper threshold: 24.36041 + 7.917393 = 32.27780
-# 2SD:34.91693
+#---------------------------------------------------------------------------------------------
+#Calculate mean and SD of maximum daily temperatures during summer months of 2000-2022
 
-# June
-#Upper threshold: 29.55497 + 6.111543 = 35.66651
-# 2SD:37.70369
+met.thresholds <- function(wdat) {
+  #Calculate max daily temperature
+  mean_max <-
+    aggregate(
+      list(TMAX_mn = wdat$TMAX),
+      by = list(month = wdat$month),
+      FUN = function(x)
+        mean(x, na.rm = TRUE)
+    ) #include na.rm if NAs in data
+  
+  sd_max <-
+    aggregate(
+      list(TMAX_sd = wdat$TMAX),
+      by = list(month = wdat$month),
+      FUN = function(x)
+        sd(x, na.rm = TRUE)
+    ) #include na.rm if NAs in data
+  
+  mean_max$TMAX_sd <- sd_max$TMAX_sd
+  mean_max$sd2 <- (mean_max$TMAX_sd * 2) + mean_max$TMAX_mn
+  
+  return(mean_max)
+  
+}
 
-# July
-#Upper threshold: 32.01782 + 5.058255 = 37.07608
-# 2SD:38.76216
-
-# August
-#Upper threshold: 30.82417 + 4.846049 = 35.67022
-# 2SD:37.28557
-
-# September
-#Upper threshold: 27.10977 + 6.214469 = 33.32424
-# 2SD:35.39573
+annap_stats <- met.thresholds(w_annap)
+bmore_stats <- met.thresholds(w_bmore)
 
 
-#Identify extremes in weather station dataset [TABLED] ---------------------------
+#Identify extremes in drop dataset------------------------------------------------
+#Using Annapolis station-derived stats as conservative and centrally located
+#set of measurements
 
-# Annapolis weather station extremes (1.5 SD)
-wdat_annap_24$ext_tmax <- ifelse(
-  wdat_annap_24$month == 5 & wdat_annap_24$TMAX >= 29.64382, 1,
-  ifelse(wdat_annap_24$month == 6 & wdat_annap_24$TMAX >= 32.75243, 1,
-    ifelse(wdat_annap_24$month == 7 & wdat_annap_24$TMAX >= 34.29692, 1,
-      ifelse(wdat_annap_24$month == 8 & wdat_annap_24$TMAX >= 33.19557, 1,
-        ifelse(wdat_annap_24$month == 9 & wdat_annap_24$TMAX >= 30.91056, 1,
-               0)
-        )
-      )
-    )
-  )
+dim(ddat_sum) #2013   24
+length(unique(ddat_sum$date)) #128 days 
 
-# Baltimore weather station extremes (1.5 SD)
-wdat_bmore_24$ext_tmax <- ifelse(
-  wdat_bmore_24$month == 5 & wdat_bmore_24$TMAX >= 32.27780, 1,
-  ifelse(wdat_bmore_24$month == 6 & wdat_bmore_24$TMAX >= 35.66651, 1,
-    ifelse(wdat_bmore_24$month == 7 & wdat_bmore_24$TMAX >= 37.07608, 1,
-      ifelse(wdat_bmore_24$month == 8 & wdat_bmore_24$TMAX >= 35.67022, 1,
-        ifelse(wdat_bmore_24$month == 9 & wdat_bmore_24$TMAX >= 33.32424, 1,
-               0)
-        )
-      )
-    )
-  )
-
-#Identify extremes in drop dataset -----------------------------------------------
-
-dim(ddat_sum) #4042   25
-
-# subset ddat to Annapolis sites
-ddat_sum_annap <- subset(ddat_sum, 
-                         sites %in% c("NEON002_N2", "NEON007_N7",
-                                      "NEON008_N8", "NEON009_N9",
-                                      "NEON017_N17", "NEON018_N18",
-                                      "NEON019_N19", "MuddyCreek_MC1",
-                                      "Open1_SLO1", "Forest2_SLF2",
-                                      "Forest3_SLR3")
-                         )
-# find extreme heat days in Annapolis
-ddat_sum_annap$ext_95 <- ifelse(
-  ddat_sum_annap$month == 5 & ddat_sum_annap$temp_95 >= 29.64382, 1,
-  ifelse(ddat_sum_annap$month == 6 & ddat_sum_annap$temp_95 >= 32.75243, 1,
-    ifelse(ddat_sum_annap$month == 7 & ddat_sum_annap$temp_95 >= 34.29692, 1,
-      ifelse(ddat_sum_annap$month == 8 & ddat_sum_annap$temp_95 >= 33.19557, 1,
-        ifelse(ddat_sum_annap$month == 9 & ddat_sum_annap$temp_95 >= 30.91056, 1,
-               0)
-        )
-      )
-    )
-  )
-
-# subset ddat to Baltimore sites
-ddat_sum_bmore <- subset(ddat_sum,
-                         sites %in% c("Open_SMO9", "Classroom_SMC7",
-                                      "Overlook_SMO6", "Pool_SMP11", 
-                                      "SweetHope_SH4", "Back_LGB1")
-                         )
-# find extreme heat days in Baltimore
-ddat_sum_bmore$ext_95 <- ifelse(
-  ddat_sum_bmore$month == 5 & ddat_sum_bmore$temp_95 >= 32.27780, 1,
-  ifelse(ddat_sum_bmore$month == 6 & ddat_sum_bmore$temp_95 >= 35.66651, 1,
-    ifelse(ddat_sum_bmore$month == 7 & ddat_sum_bmore$temp_95 >= 37.07608, 1,
-      ifelse(ddat_sum_bmore$month == 8 & ddat_sum_bmore$temp_95 >= 35.67022, 1,
-        ifelse(ddat_sum_bmore$month == 9 & ddat_sum_bmore$temp_95 >= 33.32424, 1,
-               0)
-        )
-      )
-    )
-  )
-
-# # old template
-# ddat_sum$ext_95 <- ifelse(
-#   ddat_sum$month == 4 & ddat_sum$temp_95 >= 31.091148, 1,
-#   ifelse(ddat_sum$month == 5 & ddat_sum$temp_95 >= 34.539190, 1,
-#     ifelse(ddat_sum$month == 6 & ddat_sum$temp_95 >= 36.853982, 1,
-#       ifelse(ddat_sum$month == 7 & ddat_sum$temp_95 >= 37.916988, 1,
-#              0)
+# ddat_sum$ext_95_test <- ifelse(
+#   ddat_sum$month == 5 &
+#     ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 5), "sd2"],
+#   1,
+#   ifelse(
+#     ddat_sum$month == 6 &
+#       ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 6), "sd2"],
+#     1,
+#     ifelse(
+#       ddat_sum$month == 7 &
+#         ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 7), "sd2"],
+#       1,
+#       ifelse(
+#         ddat_sum$month == 8 &
+#           ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 8), "sd2"],
+#         1,
+#         ifelse(ddat_sum$month == 9 &
+#                  ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 9), "sd2"], 1,
+#                0)
 #       )
 #     )
 #   )
+# )
+
+# table(ddat_sum$month, ddat_sum$ext_95_test, ddat_sum$habitat)          
+# table(ddat_sum$month, ddat_sum$ext_95_test, ddat_sum$location)          
+# table(ddat_sum$month, ddat_sum$ext_95_test, ddat_sum$habitat, ddat_sum$location) 
+
+ddat_sum$ext_95 <- 0
+ddat_sum[which(ddat_sum$month == 5 & ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 5), "sd2"]), "ext_95"] <- 1
+ddat_sum[which(ddat_sum$month == 6 & ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 6), "sd2"]), "ext_95"] <- 1
+ddat_sum[which(ddat_sum$month == 7 & ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 7), "sd2"]), "ext_95"] <- 1
+ddat_sum[which(ddat_sum$month == 8 & ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 8), "sd2"]), "ext_95"] <- 1
+ddat_sum[which(ddat_sum$month == 9 & ddat_sum$temp_95 >= annap_stats[which(annap_stats$month == 9), "sd2"]), "ext_95"] <- 1
 
 table(ddat_sum$month, ddat_sum$ext_95, ddat_sum$habitat)          
-table(ddat_sum$month, ddat_sum$ext_95, ddat_sum$location)          
-table(ddat_sum$month, ddat_sum$ext_95, ddat_sum$habitat, ddat_sum$location)          
 
-table(ddat_sum_annap$month, ddat_sum_annap$ext_95, ddat_sum_annap$habitat, ddat_sum_annap$location)
-table(ddat_sum_bmore$month, ddat_sum_bmore$ext_95, ddat_sum_bmore$habitat, ddat_sum_bmore$location)
 
-#Expand dataset to fill in missing dates with NAs --------------------------------
+# ddat_sum$ext_max_test <- ifelse(
+#   ddat_sum$month == 5 &
+#     ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 5), "sd2"],
+#   1,
+#   ifelse(
+#     ddat_sum$month == 6 &
+#       ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 6), "sd2"],
+#     1,
+#     ifelse(
+#       ddat_sum$month == 7 &
+#         ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 7), "sd2"],
+#       1,
+#       ifelse(
+#         ddat_sum$month == 8 &
+#           ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 8), "sd2"],
+#         1,
+#         ifelse(ddat_sum$month == 9 &
+#                  ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 9), "sd2"], 1,
+#                0)
+#       )
+#     )
+#   )
+# )
+# 
+# table(ddat_sum$month, ddat_sum$ext_max_test, ddat_sum$habitat)          
+# table(ddat_sum$month, ddat_sum$ext_max, ddat_sum$location)          
+# table(ddat_sum$month, ddat_sum$ext_max, ddat_sum$habitat, ddat_sum$location)
+
+ddat_sum$ext_max <- 0
+ddat_sum[which(ddat_sum$month == 5 & ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 5), "sd2"]), "ext_max"] <- 1
+ddat_sum[which(ddat_sum$month == 6 & ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 6), "sd2"]), "ext_max"] <- 1
+ddat_sum[which(ddat_sum$month == 7 & ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 7), "sd2"]), "ext_max"] <- 1
+ddat_sum[which(ddat_sum$month == 8 & ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 8), "sd2"]), "ext_max"] <- 1
+ddat_sum[which(ddat_sum$month == 9 & ddat_sum$temp_max >= annap_stats[which(annap_stats$month == 9), "sd2"]), "ext_max"] <- 1
+
+table(ddat_sum$month, ddat_sum$ext_max, ddat_sum$habitat)          
+
+
+#Create variable indicating extreme temp days anywhere on the landscapes------------
+
+length(unique(ddat_sum$date)) #128 days 
+str(ddat_sum)
+
+ext_count <-
+  aggregate(
+    list(ext_95_n = ddat_sum$ext_95),
+    by = list(date = ddat_sum$date),
+    FUN = function(x)
+      sum(x, na.rm = TRUE)
+  ) #include na.rm if NAs in data
+dim(ext_count) #128   2
+
+ext_mx_count <-
+  aggregate(
+    list(ext_max_n = ddat_sum$ext_max),
+    by = list(date = ddat_sum$date),
+    FUN = function(x)
+      sum(x, na.rm = TRUE)
+  ) #include na.rm if NAs in data
+dim(ext_mx_count) #128   2
+
+length(ext_count[which(ext_count$ext_95_n > 0), "date"]) #27/128 days
+length(ext_mx_count[which(ext_mx_count$ext_max_n > 0), "date"]) #36/128 days
+
+ext_count$ext_95_day <- ifelse(ext_count$ext_95_n > 0, 1, 0)
+ext_mx_count$ext_max_day <- ifelse(ext_mx_count$ext_max_n > 0, 1, 0)
+
+summary(ext_count$date == ext_mx_count$date)
+
+ext_count$ext_max_day <- ext_mx_count$ext_max_day
+
+#Merge ext temp day vars into ddat_summ
+ddat_sum <-
+  merge(
+    ddat_sum,
+    ext_count[ , c("date", "ext_95_day", "ext_max_day")],
+    by.x = c("date"),
+    by.y = c("date"),
+    all.x = TRUE
+  )
+dim(ddat_sum) #2013   28
+
+
+
+# #Temp summaries for Stillmeadow--------------------------------------------------
+# 
+# #Based on max temps from drops and 22 year mean max daily temps from Baltimore weather station
+# #there were eight extreme heat days outside the forest in June-Aug and zero inside the forest
+# 
+# #Mean daytime temp for June-Aug
+# mean(ddat_sum$temp_mn) #26.39013
+# #Mean max daytime temp for June-Aug
+# mean(ddat_sum$temp_max) #30.54104
+# 
+# mean(ddat_sum[which(ddat_sum$habitat == "forest"), "temp_max"]) #28.92266; 84 F
+# mean(ddat_sum[which(ddat_sum$habitat == "open"), "temp_max"]) #32.15941; 89.9 F
+# mean(wdat_sub$TMAX_c, na.rm = TRUE) #30.8005; 87.4
+# 
+# 
+# max(ddat_sum[which(ddat_sum$habitat == "forest"), "temp_max"]) #37.66667; 99.8 F
+# max(ddat_sum[which(ddat_sum$habitat == "open"), "temp_max"]) #39.61111; 103.3
+# max(wdat_sub$TMAX_c, na.rm = TRUE) #42.22222; 108
+# 
+# ddat_fors <- subset(ddat_sum, habitat == "forest")
+# ddat_sum[which(ddat_sum$temp_max == max(ddat_sum$temp_max)), ] #July 16
+# ddat_fors[which(ddat_fors$temp_max == max(ddat_fors$temp_max)), ] #July 16
+# wdat_sub[which(wdat_sub$TMAX_c == max(wdat_sub$TMAX_c, na.rm = TRUE)), ] #July 7, July 22
+
+
+#Expand dataset to fill in missing dates with NAs------------------------------------------------
 #Really should do this in script 1 for both 24 hrs and daily summmaries
-table(ddat_sum$date, ddat_sum$sites)
+#table(ddat_sum$date, ddat_sum$sites)
 
 length(unique(ddat_sum$date))*length(unique(ddat_sum$sites))
-#should be 406 records total (currently 404)
+#should be 2176 records total (currently 2013)
 
 grd <- expand.grid(unique(ddat_sum$date), unique(ddat_sum$sites))
 colnames(grd) <- c("date", "sites")
@@ -381,22 +344,39 @@ ddat_sum_c <-
     by.y = c("date_site"),
     all.x = TRUE
   )
-dim(ddat_sum_c) #522  28
+dim(ddat_sum_c) #2176   33
+
+summary(ddat_sum_c$date.x == ddat_sum_c$date.y)
+summary(ddat_sum_c$sites.x == ddat_sum_c$sites.y)
 
 colnames(ddat_sum_c)
 ddat_sum_c <-  ddat_sum_c[ , -4]
 ddat_sum_c <-  ddat_sum_c[ , -4]
-ddat_sum_c <-  ddat_sum_c[ , -27]
 
 colnames(ddat_sum_c)[2:3] <- c("date", "sites")
-table(ddat_sum_c$date, ddat_sum_c$sites)
+#table(ddat_sum_c$date, ddat_sum_c$sites)
 
-summary(ddat_sum_c$temp_95) # 2 NAs
+summary(ddat_sum_c$temp_95) # 163 NAs
 summary(ddat_sum_c$date) # 0 NAs
 
+#Add habitat and location variables (again)
+ddat_sum_c$habitat <- as.factor(ddat_sum_c$site)
+ddat_sum_c$location <- as.factor(ddat_sum_c$site)
+
+neon <-read.csv("./Data/NEON_plots_habitat.csv") #plot 20 is on edge of field and forest
+
+levels(ddat_sum_c$habitat) <- c("forest", "forest", "forest", "forest", "forest",
+                                "open", "open", "forest", "forest", "open",
+                                "forest", "open", "open", "open", "forest",
+                                "open", "open")
+levels(ddat_sum_c$location)  <- c("urban", "urban", "urban", "exurban", "exurban",
+                                  "exurban", "exurban", "exurban", "exurban", "exurban",
+                                  "exurban", "urban", "urban", "urban", "urban",
+                                  "urban", "urban")
+
 #save file
-#write.csv(ddat_sum_c, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_extrm_07.28.24.csv", row.names = FALSE)
-write.csv(ddat_sum_c, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_extrm_10.16.24.csv", row.names = FALSE)
+#write.csv(ddat_sum_c, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_extrm_12.10.24.csv", row.names = FALSE)
+
 
 
 ## ******************************************************************************************
@@ -502,7 +482,7 @@ ddat_sum$location <- as.factor(ddat_sum$location)
 
 ddat_sum$sites <-
   factor(ddat_sum$sites,
-         levels = c("Open_SMO9", "Open1_SLO1", "NEON007_N7", "Classroom_SMC7", "Forest2_SLF2", "NEON019_N19"))
+         levels = c("Open_SMO9", "Open1_SLO1", "SweetHope_SH4",  "NEON007_N7", "Classroom_SMC7", "Forest3_SLR3", "NEON019_N19"))
 levels(ddat_sum$sites)
 
 ddat_sum$habitat <-
@@ -523,15 +503,12 @@ ddat_sum[which(ddat_sum$ext_95_plt == 0), "ext_95_plt"] <- NA
 #Plot and save  
 
 #temperature versus date and hour
-# png("./Figures_7-26-24/sci_faith_Q95_air_temp_2024_day_extrm_purple_07.28.24.png", width = 9.7, height = 4.3, units = 'in', res = 600)
-png("C:/Users/kirchgrabera/Downloads/sci_faith_Q95_air_temp_2024_day_extrm_purple_10.16.24.png", 
-    width = 9.7, height = 4.3, units = 'in', res = 600)
-
+png("./Figures_11-10-24/sci_faith_Q95_air_temp_2024_day_extrm_red_12.5.24.png", width = 9.7, height = 4.3, units = 'in', res = 600)
 temp.date_plot <-
   ggplot(ddat_sum, aes(date, temp_95, group = factor(sites), color=factor(habitat))) +
   facet_grid(cols = vars(location)) +
-  geom_line(aes(color = factor(habitat)), linewidth = 1, alpha = 0.75) + #color = "#2d718eff"
-  geom_point(data = ddat_sum[which(ddat_sum$ext_95_plt == 1), ], aes(date, temp_95), color = "#8305a7ff", shape = 17, size = 2, stroke = 2) + ##8305a7ff; #color = "#2d718eff"
+  geom_line(aes(color = factor(habitat)), size = 1, alpha = 0.75) + #color = "#2d718eff"
+  geom_point(data = ddat_sum[which(ddat_sum$ext_95_plt == 1), ], aes(date, temp_95), color = "red", shape = 17, size = 2, stroke = 2) + ##8305a7ff; #color = "#2d718eff"
   scale_color_manual(values=c("#fba238ff", "#29af7fff")) +
   theme(axis.text = element_text(size = 14)) + 
   #theme(legend.position = "none") +

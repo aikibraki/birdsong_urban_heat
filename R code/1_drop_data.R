@@ -1,13 +1,14 @@
 ###########################################################################################################################################################
 ###(1) Extracting and summarizing data from drop sensors##################################################################################################
 ########################################################################################################################################################
-###updated 11-26-24
+###updated 11-10-24
 #R version 4.3.1
 
 #Questions for Aidan:
 
 #Subtract time zone? WHAT IS THE TIME ZONE OF THE DATA (local ET???)
 #NEED TO ASK AIDAN
+#DROP DATA ARE IN LOCAL TIME EST/EDT
 
 #File missing for drop: 8294, from 6/18 - 6/20? 
 #Only three files in folder but metadata say there should be four
@@ -25,6 +26,7 @@
 # A: Some files are from checkup dates (as opposed to collection dates), so 
 #    there are some extras.
 
+
 ## ******************************************************************************************
 ## Preamble
 ## ******************************************************************************************
@@ -39,29 +41,16 @@ library(lubridate) #lubridate_1.9.2
 ## Load data files
 ## ******************************************************************************************
 
-#What the raw data look like
-# 0;31.10.2013 11:45;0;21.5625;22.0625;23.125;148;1;0
-
-#What the values are
-# 0 	index of the measure
-# 31.10.2013 11:45 	date and time in UTC
-# 0 	time zone
-# 21.5625 	T1
-# 22.0625 	T2
-# 23.125 	T3
-# 148 	soil moisture count (raw moisture data)
-# 1 	shake - values 1 (shake) or 0. Only for old model TMS-3.
-# 0 	errFlag (if =1 the device couldn't convert time from PCF chip)
-
 
 #Load metadata files
-getwd()
-meta_dat <- read.csv("Data/audiomoth_data_2024/SciFaith_Drop_metadata.csv")
+meta_dat <- read.csv("audiomoth_metadata_2024/SciFaith_Drop_metadata.csv")
+dim(meta_dat) #264  12
 #date_out <- read.csv("data/TOMST data/SERC_downloaded_Fall 2023/SERC_TMS4_datacollection_coords_Fall2023.csv")
 #sens_ids <- read.csv("data/TOMST data/SERCsensorIDs.csv")
 
-# #set wd() to SSD 
-# setwd("D:/Science and Faith Audio Files")
+#set wd() to SSD 
+setwd("D:/Science and Faith Audio Files")
+
 
 #Load TOMST data files (wrap into a function that gets filenames, checks for duplicates,
 #loads files into list and names columns)
@@ -70,12 +59,17 @@ meta_dat <- read.csv("Data/audiomoth_data_2024/SciFaith_Drop_metadata.csv")
 #Load all drop files-------------------------------------------------------------
 #get list of filenames
 serc <- paste("SERC", dir("SERC"), sep = "/")
+sm <- paste("Stillmeadow", dir("Stillmeadow"), sep = "/")
 sl <- paste("StLukes", dir("StLukes"), sep = "/")
 sh <- paste("SweetHope", dir("SweetHope"), sep = "/")
-sm <- paste("Stillmeadow", dir("Stillmeadow"), sep = "/")
 lg <- paste("LibertyGrace", dir("LibertyGrace"), sep = "/")
 
 sens.names <- c(serc, sm, sl, sh, lg)
+
+# sens <- c("SERC/NEON007_N7", "SERC/NEON019_N19", "Stillmeadow/Open_SMO9", 
+#           "Stillmeadow/Classroom_SMC7", "StLukes/Open1_SLO1", 
+#           "StLukes/Forest3_SLR3", "SweetHope/SweetHope_SH4") 
+# #Look at just a subset first
 
 filenames <- vector()
 sites.names <-vector()
@@ -92,21 +86,20 @@ for (i in 1:length(sens.names)) {
   drop.id <- c(drop.id, temp4)
 }
 
+length(unique(drop.id)) #19
+
 #Load all files from Drop sensors
 drop_raw <- lapply(filenames, function(x) {
-                            read.csv(x,  header = FALSE, skip = 5)
-                          }) #big list of data files
+  read.csv(x,  header = FALSE, skip = 5)
+}) #big list of data files
 names(drop_raw) <- drop.id #Assign sensor names to each df in list
-length(drop_raw) #68
+length(drop_raw) #168
 
 
-#Add column names
+#Add column names for drops
 cols <- c("date_time", "temp", "wb_temp", "rel_hum", "stat_pres", "heat_index", "dew_point", "data_type")
 
 drop_raw <- lapply(drop_raw, setNames, cols)
-library(tidyverse)
-drop_raw <- lapply(drop_raw, select, all_of(cols))
-drop_raw <- lapply(drop_raw, drop_na)
 head(drop_raw[[1]])
 
 
@@ -170,46 +163,68 @@ for (i in 1:length(drop_raw)) {
   print(i)
   print(summary(is.na(drop_raw[[i]][ , 1:6])))
 }
-#No NAs
+#some sensors have added columns just full of NAS (15 rather than 8 columns, 7 with all NAs)
+#7983  7983  7983 7983  7983
+#Not sure why - make sure this does not impact downstream data manipulation
 
-####
-#Count NAs in each df in drop_raw
-count_nas <- function(df) {
-  colSums(is.na(df))
+
+#see what is going on with the weird datafiles-------------------------------------
+#Looks like sonmeone probably opened the files in excel and them saved them,
+#which added NAs and changed the datatime format - don't do this!
+#affects these items in the list: 151, 152, 153, 160, 161
+
+str(drop_raw[[151]])
+str(drop_raw[[152]])
+str(drop_raw[[153]])
+str(drop_raw[[160]])
+str(drop_raw[[161]])
+
+#split out dataframes with different date_time formats into two lists-------------
+
+drop_raw1 <- drop_raw[-c(151, 152, 153, 160, 161)]
+length(drop_raw1) #163
+
+drop_raw2 <- drop_raw[c(151, 152, 153, 160, 161)]
+length(drop_raw2) #5
+
+#recheck dates and dimensions
+date_chk <- data.frame()
+for (i in 1:length(drop_raw2)) {
+  tmp <-
+    data.frame(
+      sensor = names(drop_raw2[i]),
+      data_time_strt = drop_raw2[[i]][1, "date_time"],
+      data_time_end = drop_raw2[[i]][nrow(drop_raw2[[i]]), "date_time"]
+    )
+  date_chk <- rbind(date_chk, tmp)
 }
+date_chk
 
-na_counts <- lapply(drop_raw, count_nas)
-drop_raw_nas <- do.call(rbind, na_counts)
-rm(na_counts)
-####
+sapply(drop_raw2, dim)
+
+#drop weird columns with all NAs
+str(drop_raw2)
+drop_raw2 <- lapply(drop_raw2, function(x) { x[ -c(9:15)] })
+
 
 ## ******************************************************************************************
 ## Format date and time
 ## ******************************************************************************************
 
-rm(problematic_files)
 
-drop_dt <- lapply(drop_raw, function(x) cbind(x, datetime = parse_date_time(x$date_time, '%Y-%m-%d %H:%M:%S %p')))
+drop_dt1 <- lapply(drop_raw1, function(x) cbind(x, datetime = parse_date_time(x$date_time, '%Y-%m-%d %H:%M:%S %p')))
+str(drop_dt1)
 
-drop_dt <- lapply(drop_raw, function(x) {
-  x %>% 
-    mutate(datetime = as.POSIXct(date_time, format = '%Y-%m-%d %I:%M:%S %p'))
-})
+drop_dt2 <- lapply(drop_raw2, function(x) cbind(x, datetime = parse_date_time(x$date_time, '%m/%d/%Y %H:%M')))
+str(drop_dt2)
 
-# it won't let me look at the dfs for each individual sensor (just gives me the 7983 with 11106 rows -- the first 7983 in the list)
-
-#Note: there is an app for downloading the sensor data. Apparently an update caused a format change to the
-#timestamp (hence the contortions above). IN the app, one can specify the date format (but the change went unnoticed.
-#In the post-update format, there is no hour:minute timestamp at midnight so every date/time at midnight gets
-#turned into an NA when converting to posix above (ugh).
-#Ideally, we will avoid all of this in the future by specifying the date/time format that must be used in the
-#app when downloading data. For now, we just have to deal with it the best we can.
-
-
+drop_dt <- c(drop_dt1, drop_dt2)
+length(drop_dt) #168
+str(drop_dt)
 
 #Panama is UTC-5 timezone, as is Edgewater during standard time (EST)
 #Maybe just use standard time (UTC-5) offset for all data and not worry about daylight savings
-#like most of the world??? seriously!!
+#like most of the world???
 #drop_dt <- lapply(drop_dt, function(x) cbind(x, datetime_loc = x$datetime - hours(5)))
 
 #Separate out date and time elements
@@ -217,13 +232,9 @@ drop_dt <- lapply(drop_dt, function(x) cbind(x, hour = as.POSIXlt(x$datetime)$ho
 drop_dt <- lapply(drop_dt, function(x) cbind(x, minute = as.POSIXlt(x$datetime)$min))
 drop_dt <- lapply(drop_dt, function(x) cbind(x, month = as.POSIXlt(x$datetime)$mon+1))
 drop_dt <- lapply(drop_dt, function(x) cbind(x, day = day(as.POSIXlt(x$datetime))))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, date = as.POSIXct(strftime(x$datetime, format="%Y-%m-%d"))))
-drop_dt <- lapply(drop_dt, function(x) cbind(x, time = format(as.POSIXct(x$datetime), format = "%H:%M"))) 
+drop_dt <- lapply(drop_dt, function(x) cbind(x, date = date(x$datetime)))
+drop_dt <- lapply(drop_dt, function(x) cbind(x, time = format(as.POSIXct(x$datetime), format = "%H:%M")))
 
-# all the SH4 ones get turned into NA -- different datetime format -- figure out later
-# SH format:      "5/18/2024 10:40"
-# Correct format: "2024-05-23 09:20:00 PM"
-# correct format via excel: yyyy-mm-dd h:mm:ss AM/PM 
 
 #Perform additional data completeness QC checks***************************************
 #Wrap into QC check function/s
@@ -234,11 +245,8 @@ for (i in 1:length(drop_dt)) {
   print(i)
   print(summary(is.na(drop_dt[[i]][ , "datetime"])))
 }
+#18 NAs in two of the dataframes
 
-# NAs table
-na_counts <- lapply(drop_dt, count_nas)
-drop_dt_nas <- do.call(rbind, na_counts)
-rm(na_counts)
 
 #Check that all hour intervals are 10 min
 tdiff_chk <- data.frame()
@@ -251,9 +259,8 @@ for (i in 1:length(drop_dt)) {
   tdiff_chk <- rbind(tdiff_chk, tmp)
 }
 
-#Two sensors have time stamps that jump back in time
-which(diff(drop_dt[[4]][ , "datetime"], lag = 1) > 10)
-drop_dt[[4]][1:25 , ]
+which(diff(drop_dt[[11]][ , "datetime"], lag = 1) > 10)
+drop_dt[[11]][1:25 , ]
 
 #Lots of time intervals are different from 10 minutes. 
 #Need to trim data to in/out date/times and recheck
@@ -264,10 +271,13 @@ drop_dt[[4]][1:25 , ]
 
 #Trim to within in/out dates/times for each sensor---------------------------------
 #cleanup deployment data
+dim(meta_dat)
 str(meta_dat)
 meta_dat <- meta_dat[ , 1:10]
 summary(as.factor(meta_dat$Deployment..))
-meta_dat <- subset(meta_dat, Deployment.. != "Checkup")
+meta_dat <- subset(meta_dat, Deployment.. != "checkup")
+dim(meta_dat) #167  10
+
 
 length(unique(meta_dat$Drop..)) #19 unique drops
 length(unique(meta_dat$Site)) #17 Unique sites
@@ -294,11 +304,11 @@ summary(ddate$drop == cdate$drop)
 ddate <- cbind(ddate, cdate[ , 2])
 colnames(ddate)[3] <- "collect.date"
 
-length(unique(names(drop_dt))) #8 unique sensors
+length(unique(names(drop_dt))) #19 unique sensors
 ddate <- ddate[ddate$drop %in% unique(names(drop_dt)), ]
-dim(ddate) #8 3
+dim(ddate) #19 3
 
-#Subset to desired date and time range 
+#Subset to data between deploy and collect dates for each sensor
 drop_foc <- list()
 for (i in 1:length(drop_dt)) {
   first <- ddate[which(ddate$drop == names(drop_dt[i])), "deploy.date"] + days(1)
@@ -314,6 +324,9 @@ names(drop_foc) <- names(drop_dt)
 sapply(drop_raw, dim)
 sapply(drop_foc, dim)
 
+length(drop_foc) #168
+str(drop_foc)
+
 
 #Perform additional data completeness QC checks-----------------------------------
 #Wrap into QC check function/s
@@ -324,8 +337,11 @@ for (i in 1:length(drop_foc)) {
   print(i)
   print(summary(is.na(drop_foc[[i]][ , "datetime"])))
 }
-#No NAs here
+#No NAs here; one dataframe was empty (no data within date range?)
+str(drop_foc[[136]])
 
+#Drop empty dataframe
+drop_foc <- drop_foc[-c(136)]
 
 #Check that all hour intervals are 10 min
 tdiff_chk <- data.frame()
@@ -338,11 +354,40 @@ for (i in 1:length(drop_foc)) {
   tdiff_chk <- rbind(tdiff_chk, tmp)
 }
 
-#Two sensors have time stamps that jump back in time
-which(diff(drop_foc[[4]][ , "datetime"], lag = 1) > 10)
-drop_foc[[4]][1:25 , ]
+#There are a number of timesteps > 10
+which(diff(drop_foc[[59]][ , "datetime"], lag = 1) > 10)
+drop_foc[[59]][3875:3880 , ] #skips from 10:20 pm to 11:30 pm 
 
-#Some (few) time intervals are still different from 10 minutes. 
+which(diff(drop_foc[[140]][ , "datetime"], lag = 1) > 10)
+drop_foc[[140]][2525:2535, ] #skips from 11:50 pm on 5/16 to 12:00 am on 5/28 
+drop_foc[[140]][4640:4645, ] #skips from 4:00 pm to 4:20 pm
+
+which(diff(drop_foc[[140]][ , "datetime"], lag = 1) < 10)
+drop_foc[[140]][35:45, ] #skips backwards from 23:50 on 5/17 to 00:00 on 5/17? 
+drop_foc[[140]][1580:1588, ] #skips backwars from 5/27 to 5/10!!
+
+which(diff(drop_foc[[100]][ , "datetime"], lag = 1) > 1000)
+drop_foc[[100]][1300:1305, ] #Skips forward 5 days in June - data gaps?
+
+#Some time intervals are still different from 10 minutes. 
+#Most are positive and could represent data gaps
+
+summary(tdiff_chk$interval)
+tdiff_chk[which(tdiff_chk$interval == -25290 |
+                  tdiff_chk$interval == -1430), ]
+
+which(diff(drop_foc[[149]][ , "datetime"], lag = 1) < 1)
+drop_foc[[100]][1300:1305, ] #Skips forward 5 days in June - data gaps?
+
+#Some are negative - all from sensor 7964. May need to drop this sensor
+#Sensor 7964 was at the open site at St. Lukes
+#seems like it is just these two time jumps repeated across downloads
+which(diff(drop_foc[[140]][ , "datetime"], lag = 1) < 10)
+drop_foc[[140]][35:45, ] #skips backwards from 23:50 on 5/17 to 00:00 on 5/17? 
+drop_foc[[140]][1580:1588, ] #skips backwards from 5/27 to 5/10!!
+
+
+
 #----------------------------------------------------------------------------------
 
 
@@ -355,23 +400,23 @@ drop_foc[[4]][1:25 , ]
 
 #Drop empty dataframe/s from list
 sapply(drop_foc, dim)
-names(drop_foc)
-drop_foc[25]
-drop_foc <- drop_foc[-25]
-length(drop_foc) #34
+# names(drop_foc)
+# drop_foc[25]
+# drop_foc <- drop_foc[-25]
+# length(drop_foc) #34
 
 
 #Combine all into a single dataframe
-#optional - Jonathan, you may prefer to keep as a list or do things differently
 drop_foc.df <- do.call(rbind, unname(Map(cbind, sensor = names(drop_foc), drop_foc)))
-str(drop_foc.df) #154483 obs. of  16 variables
+str(drop_foc.df) #1606053 obs. of  16 variables
 table(drop_foc.df$sensor) #Numbers match those expected from sum of individual 
 #downloads in drop_foc list
 
-#Subset to unique cases, as there are lots of duplicate recrods from consecutive
+#Subset to unique cases, as there are lots of duplicate records from consecutive
 #downloads where the memory was not cleared
 drop.df <- unique(drop_foc.df[ , ])
-str(drop.df) #84399 obs. of  16 variables (so nearly half of ob were duplicates?)
+str(drop.df) #386393 obs. of  16 variables
+
 
 #Merge in site info
 site.dat <- data.frame(sites = sites.names, sensor = drop.id)
@@ -384,27 +429,34 @@ drop.df <-
     by.y = c("sensor"),
     all.x = TRUE
   )
-dim(drop.df) #79920   17
+dim(drop.df) #386393     17
 
-drop.df <- drop.df %>% mutate_at(c('wb_temp', 'rel_hum', 
-                                   'heat_index', 'dew_point'), 
-                                 as.numeric)
 
 #Perform more data completeness QC checks----------------------------------------
 
 #Check that ranges of temperature and moisture values makes sense
 #Need to improve/automate this part too
 
+#Some variables converted to character for some reason
+drop.df$wb_temp <- as.numeric(drop.df$wb_temp)
+drop.df$rel_hum <- as.numeric(drop.df$rel_hum)
+drop.df$heat_index <- as.numeric(drop.df$heat_index)
+drop.df$dew_point <- as.numeric(drop.df$dew_point)
+
+#which observations are NAs
+drop.df[is.na(drop.df$wb_temp), ]
+drop.df[88275:88285, ]
+#All four NAs are from sensor 7964 on 9-8-24 at open St Lukes
+
 summary(drop.df$temp)
-summary(drop.df$wb_temp)
-summary(drop.df$rel_hum)
+summary(drop.df$wb_temp) #4 NAs
+summary(drop.df$rel_hum) #4 NAs
 summary(drop.df$stat_pres)
-summary(drop.df$heat_index)
-summary(drop.df$dew_point)
+summary(drop.df$heat_index) #4 NAs
+summary(drop.df$dew_point) #4 NAs
 summary(drop.df$datetime)
 summary(as.factor(drop.df$sites))
-
-#No NAs or extreme values!!
+#No extreme values!!
 
 aggregate(
   list(min.date = drop.df$datetime),
@@ -413,13 +465,24 @@ aggregate(
   na.rm = TRUE
 ) #include na.rm if NAs in data
 
-# sites            min.date
-# 1 Classroom_SMC7 2024-04-12 04:00:00
-# 2   Forest2_SLF2 2024-04-13 04:00:00
-# 3     NEON007_N7 2024-04-10 04:00:00
-# 4    NEON019_N19 2024-04-10 04:00:00
-# 5      Open_SMO9 2024-04-12 04:00:00
-# 6     Open1_SLO1 2024-04-13 04:00:00
+#             sites            min.date
+# 1       Back_LGB1 2024-06-28 00:00:00
+# 2  Classroom_SMC7 2024-04-12 00:00:00
+# 3    Forest2_SLF2 2024-04-13 00:00:00
+# 4    Forest3_SLR3 2024-05-10 10:40:00
+# 5  MuddyCreek_MC1 2024-04-11 00:00:00
+# 6      NEON002_N2 2024-04-11 00:00:00
+# 7      NEON007_N7 2024-04-10 00:00:00
+# 8      NEON008_N8 2024-04-10 00:00:00
+# 9      NEON009_N9 2024-04-11 00:00:00
+# 10    NEON017_N17 2024-04-10 00:00:00
+# 11    NEON018_N18 2024-04-10 00:00:00
+# 12    NEON019_N19 2024-04-10 00:00:00
+# 13      Open_SMO9 2024-04-12 00:00:00
+# 14     Open1_SLO1 2024-04-13 00:00:00
+# 15  Overlook_SMO6 2024-04-12 00:00:00
+# 16     Pool_SMP11 2024-04-12 00:00:00
+# 17  SweetHope_SH4 2024-04-12 00:00:00
 
 aggregate(
   list(max.date = drop.df$datetime),
@@ -428,19 +491,33 @@ aggregate(
   na.rm = TRUE
 ) #include na.rm if NAs in data
 
-# sites            max.date
-# 1 Classroom_SMC7 2024-07-09 03:50:00
-# 2   Forest2_SLF2 2024-07-09 03:50:00
-# 3     NEON007_N7 2024-07-08 03:50:00
-# 4    NEON019_N19 2024-07-08 03:50:00
-# 5      Open_SMO9 2024-07-09 03:50:00
-# 6     Open1_SLO1 2024-07-09 03:50:00
-
+#             sites            max.date
+# 1       Back_LGB1 2024-09-24 23:50:00
+# 2  Classroom_SMC7 2024-09-24 23:50:00
+# 3    Forest2_SLF2 2024-09-22 23:50:00
+# 4    Forest3_SLR3 2024-07-08 23:50:00
+# 5  MuddyCreek_MC1 2024-09-22 23:50:00
+# 6      NEON002_N2 2024-09-22 23:50:00
+# 7      NEON007_N7 2024-09-22 23:50:00
+# 8      NEON008_N8 2024-09-22 23:50:00
+# 9      NEON009_N9 2024-09-22 23:50:00
+# 10    NEON017_N17 2024-09-22 23:50:00
+# 11    NEON018_N18 2024-09-22 23:50:00
+# 12    NEON019_N19 2024-09-22 23:50:00
+# 13      Open_SMO9 2024-09-24 23:50:00
+# 14     Open1_SLO1 2024-09-22 23:50:00
+# 15  Overlook_SMO6 2024-09-24 23:50:00
+# 16     Pool_SMP11 2024-09-24 23:50:00
+# 17  SweetHope_SH4 2024-09-24 23:50:00
 
 
 #further trim data to common min and max dates - 2024-05-10 10:40:00 to 2024-07-08 03:50:00
-drop.df <- subset(drop.df, datetime >= "2024-04-13 04:00:00" & datetime <= "2024-07-08 03:50:00")
-str(drop.df) #78107 obs. of  17 variables
+drop.df <- subset(drop.df, datetime >= "2024-05-15 00:00:00" & datetime <= "2024-09-20 00:00:00")
+str(drop.df) #303402 obs. of  17 variables
+range(drop.df$datetime) #"2024-05-15 04:00:00 UTC" "2024-09-20 04:00:00 UTC"
+
+drop.df$record_ID <- seq.int(nrow(drop.df))
+
 
 #--------------------------------------------------------------------------------
 
@@ -457,31 +534,42 @@ drop.df$heat_index_c <- (drop.df$heat_index - 32)/1.8
 drop.df$habitat <- as.factor(drop.df$sites)
 drop.df$location <- as.factor(drop.df$sites)
 
-#levels(drop.df$habitat) <- c("forest", "forest", "open", "forest", "open", "open")
-levels(drop.df$habitat) <- c("forest", "open", "open", "forest")
-#levels(drop.df$location)  <- c("urban", "urban", "exurban", "exurban", "urban", "urban")
-levels(drop.df$location) <- c("urban", "urban", "urban", "urban")
+neon <-read.csv("./NEON_plots_habitat.csv") #plot 20 is on edge of field and forest
+
+levels(drop.df$habitat) <- c("open", "forest", "forest", "forest", "forest", 
+                             "forest", "open", "open", "forest", "forest",
+                             "open", "forest", "open", "open", "open",
+                             "forest", "open")
+levels(drop.df$location)  <- c("urban", "urban", "urban", "urban", "exurban",
+                               "exurban", "exurban", "exurban", "exurban", "exurban",
+                               "exurban", "exurban", "urban", "urban", "urban",
+                               "urban", "urban")
 
 #Save dataframe with all (day and night) temp measurements
-dim(drop.df) #78107   23
+dim(drop.df) #303402     24
 
 #set wd() to local project
-setwd("C:/Users/Nowak/Documents/JUSTIN - Active_Documents/SERC/Research Projects/Science and Faith/Acoustic_monitoring")
+setwd("C:/Users/Nowak/Documents/JUSTIN - Active_Documents/SERC/Research Projects/Science and Faith/Acoustic_monitoring/urban_audiomoth_project_11.11.24")
 
-#write.csv(drop.df, "Data/cleaned_drop_data/drop_data_may_july_2024_24hrs_07.26.24.csv", row.names = FALSE)
-#write.csv(drop.df, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/drop_data_april_july_2024_24hrs_10.16.24.csv", row.names = FALSE)
-write.csv(drop.df, "Data/cleaned_drop_data/sm_drop_data_april_july_2024_24hrs_11.08.24.csv", row.names = FALSE)
+#write.csv(drop.df, "Data/cleaned_drop_data/drop_data_may_sept_2024_24hrs_11.10.24.csv", row.names = FALSE)
+
 
 ## ******************************************************************************************
 ## Aggregate to daily metrics for each sensor
 ## ******************************************************************************************
 
 #select daytime hours (based on approx times of sunrise and sunset for focal dates - check this)
-drop_day <- subset(drop.df, hour  >= 6 & hour <= 20) #for temperate zone
-dim(drop_day) #48492    23
+# drop_day <- subset(drop.df, hour  >= 6 & hour <= 20) #for temperate zone
+# dim(drop_day) #189099     24
 
+#Create day/night factor
+drop.df$day_night <- cut(drop.df$hour, breaks = c(-Inf, 5, 20, Inf), labels = c("night","day", "night"))
+dim(drop.df) #303402     25
 
-length(unique(drop_day$date)) #87 days in dataset
+table(drop.df$hour, drop.df$day_night)
+drop_day <- drop.df
+
+length(unique(drop_day$date)) #128 days in dataset
 table(drop_day$date, drop_day$sites)
 #Data missing only from site Forest3_SLR3 for 6/18-6/20
 #7 sites x 58 days = 406-2 = 404 expected rows in aggregated data
@@ -498,12 +586,13 @@ daily_95 <-
       rel_hum_95 = drop_day$rel_hum
     ),
     by = list(sites = drop_day$sites,
-              date = drop_day$date),
+              date = drop_day$date,
+              day_night = drop_day$day_night),
     FUN = function(x)
       quantile(x, 0.95, na.rm = TRUE)
   ) #include na.rm if NAs in data
 
-dim(daily_95) #520   6
+dim(daily_95) #4042    7 (2013    6)
 summary(daily_95) #No NAs
 
 
@@ -519,11 +608,12 @@ daily_max <-
       rel_hum_max = drop_day$rel_hum
     ),
     by = list(sites = drop_day$sites,
-              date = drop_day$date),
+              date = drop_day$date,
+              day_night = drop_day$day_night),
     FUN = function(x) max(x, na.rm = TRUE)
   ) #include na.rm if NAs in data
 
-dim(daily_max) #520   6
+dim(daily_max) #4042    7 (2013    6)
 summary(daily_max) #No NAs
 
 #Calculate mean daily temperature
@@ -537,11 +627,12 @@ daily_mn <-
       rel_hum_mn = drop_day$rel_hum
     ),
     by = list(sites = drop_day$sites,
-              date = drop_day$date),
+              date = drop_day$date,
+              day_night = drop_day$day_night),
     FUN = function(x) mean(x, na.rm = TRUE)
   ) #include na.rm if NAs in data
 
-dim(daily_mn) #520   6
+dim(daily_mn) #4042    7  (2013    6)
 summary(daily_mn) #No NAs
 
 
@@ -556,12 +647,13 @@ daily_05 <-
       rel_hum_05 = drop_day$rel_hum
     ),
     by = list(sites = drop_day$sites,
-              date = drop_day$date),
+              date = drop_day$date,
+              day_night = drop_day$day_night),
     FUN = function(x)
       quantile(x, 0.05, na.rm = TRUE)
   ) #include na.rm if NAs in data
 
-dim(daily_05) #520   6
+dim(daily_05) #4042    7  (2013    6)
 summary(daily_05) #No NAs
 
 summary(daily_95$sites == daily_mn$sites) #all match
@@ -575,30 +667,45 @@ daily <-
     daily_max[, c("temp_max", "wb_temp_max", "heat_index_max", "rel_hum_max")],
     daily_mn[, c("temp_mn", "wb_temp_mn", "heat_index_mn", "rel_hum_mn")],
     daily_05[, c("temp_05", "wb_temp_05", "heat_index_05", "rel_hum_05")])
-dim(daily) #520   18
+dim(daily) #4042   19 (2013    18)
 head(daily)
 plot(daily$temp_max, daily$temp_95)
+plot(daily$wb_temp_95, daily$temp_95)
 abline(0, 1)
 
 #add habitat and site factors
 daily$habitat <- as.factor(daily$sites)
 daily$location <- as.factor(daily$sites)
 
-#levels(daily$habitat) <- c("forest", "forest", "open", "forest", "open", "open")
-#levels(daily$location) <- c("urban", "urban", "exurban", "exurban", "urban", "urban")
-
-#for stillmeadow
-levels(daily$habitat) <- c("forest", "open", "open", "forest")
-levels(daily$location) <- c("urban", "urban", "urban", "urban")
-
+levels(daily$habitat) <- c("open", "forest", "forest", "forest", "forest", 
+                           "forest", "open", "open", "forest", "forest",
+                           "open", "forest", "open", "open", "open",
+                           "forest", "open")
+levels(daily$location)  <- c("urban", "urban", "urban", "urban", "exurban",
+                             "exurban", "exurban", "exurban", "exurban", "exurban",
+                             "exurban", "exurban", "urban", "urban", "urban",
+                             "urban", "urban")
 
 table(daily$sites, daily$habitat)
 table(daily$sites, daily$location)
+dim(daily) #4042   21
 
 #Save summaries
-#write.csv(daily, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_07.26.24.csv", row.names = FALSE)
-#write.csv(daily, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/drop_data_2024_daytime_summaries_10.16.24.csv", row.names = FALSE)
-write.csv(daily, "C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/audio_analysis/birdnet/sm_drop_data_2024_daytime_summaries_11.08.24.csv", row.names = FALSE)
+#write.csv(daily, "Data/cleaned_drop_data/drop_data_2024_daytime_summaries_11.10.24.csv", row.names = FALSE)
+#write.csv(daily, "Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv", row.names = FALSE)
+
+#Compare files--------------------------------------------------------------------
+
+day_tmp <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_11.10.24.csv")
+dim(day_tmp) #2013   20
+
+day <- subset(daily, day_night == "day")
+dim(day)
+
+summary(day_tmp$date == day$date) #All match
+plot(day_tmp$wb_temp_mn, day$wb_temp_mn) #All match
+abline(0, 1)
+
 
 ## ******************************************************************************************
 ## Make plots
@@ -636,12 +743,19 @@ sens_ids <- unique(drop.df$sensor)
 levels(drop.df$habitat)
 levels(as.factor(drop.df$sites))
 
+levels(daily$habitat) <- c("open", "forest", "forest", "forest", "forest", 
+                           "forest", "open", "open", "forest", "forest",
+                           "open", "forest", "open", "open", "open",
+                           "forest", "open")
+
 #Re-order factor levels for 24 hr data
 drop.df$sites <- as.factor(drop.df$sites)
 drop.df$sites <-
   factor(drop.df$sites,
-         #levels = c("Open_SMO9", "Open1_SLO1", "SweetHope_SH4",  "NEON007_N7", "Classroom_SMC7", "Forest2_SLF2", "NEON019_N19"))
-         levels = c("Classroom_SMC7", "Open_SMO9", "Overlook_SMO6", "Pool_SMP11"))
+         levels = c("Back_LGB1", "NEON007_N7", "NEON008_N8", "NEON018_N18",
+                    "Open_SMO9", "Open1_SLO1", "Overlook_SMO6", "SweetHope_SH4",
+                    "Pool_SMP11", "Classroom_SMC7", "Forest2_SLF2", "Forest3_SLR3", "MuddyCreek_MC1", 
+                    "NEON002_N2", "NEON009_N9", "NEON017_N17", "NEON019_N19"))
 levels(drop.df$sites)
 
 drop.df$habitat <-
@@ -650,20 +764,22 @@ drop.df$habitat <-
 
 levels(drop.df$habitat)
 
-#Re-order factor levels for daily summaries 
+#Re-order factor levels for daiy summaries 
 daily$sites <- as.factor(daily$sites)
 levels(daily$sites)
 daily$sites <-
   factor(daily$sites,
-         #levels = c("Open_SMO9", "Open1_SLO1", "SweetHope_SH4",  "NEON007_N7", "Classroom_SMC7", "Forest2_SLF2", "NEON019_N19"))
-         levels = c("Classroom_SMC7", "Open_SMO9", "Overlook_SMO6", "Pool_SMP11"))
+         levels = c("Back_LGB1", "NEON007_N7", "NEON008_N8", "NEON018_N18",
+                    "Open_SMO9", "Open1_SLO1", "Overlook_SMO6", "SweetHope_SH4",
+                    "Pool_SMP11", "Classroom_SMC7", "Forest2_SLF2", "Forest3_SLR3", "MuddyCreek_MC1", 
+                    "NEON002_N2", "NEON009_N9", "NEON017_N17", "NEON019_N19"))
 
 levels(daily$habitat)
 daily$habitat <-
   factor(daily$habitat,
          levels = c("open", "forest"))
 
-
+table(daily$sites, daily$location, daily$habitat)
 
 #Plot and save  - lets loop through sensors and save as pngs so we can visually
 #inspect and makes sure everything looks ok
@@ -671,10 +787,10 @@ daily$habitat <-
 #temperature versus date and hour
 png("./Figures_7-26-24/sci_faith_air_temp_2024_24hrs_07.26.24.png", width = 9.7, height = 4.3, units = 'in', res = 600)
 temp.date_plot <-
-  ggplot(daily, aes(date, temp_95, group = factor(sites), color=factor(habitat))) +
+  ggplot(daily, aes(date, wb_temp_95, group = factor(sites), color=factor(habitat))) +
   facet_grid(cols = vars(location)) +
-    #geom_point(aes(color = factor(sites)), shape = 16, size = 1, stroke = 1, alpha = 0.55) + #color = "#2d718eff"
-  geom_line(aes(color = factor(habitat)), linewidth = 1, alpha = 0.75) + #color = "#2d718eff"
+  #geom_point(aes(color = factor(sites)), shape = 16, size = 1, stroke = 1, alpha = 0.55) + #color = "#2d718eff"
+  geom_line(aes(color = factor(habitat)), size = 1, alpha = 0.75) + #color = "#2d718eff"
   scale_color_manual(values=c("#fba238ff", "#29af7fff")) +
   # ggplot(btree_sub.df.cov, aes(datetime_loc, temp.3, color = LAI)) +
   # geom_point(aes(color = LAI), shape = 16, size = 1, stroke = 1, alpha = 0.55) +
@@ -776,6 +892,68 @@ temp.hour_plot <-
 temp.hour_plot
 dev.off()
 
+
+#plot data completeness-----------------------------------------------------------
+
+site_ord <- data.frame(sites = levels(daily$sites), site.ord = 1:17)
+
+daily$hab_loc <- paste(daily$habitat, daily$location, sep = "_")
+levels(as.factor(daily$hab_loc))
+
+#add NAs to site X dates with missing values
+sitexdate <- expand.grid(unique(daily$date), unique(daily$sites))
+colnames(sitexdate) <- c("date", "site")
+sitexdate$site_date <- paste(sitexdate$site, sitexdate$date, sep = "_")
+daily$site_date <- paste(daily$sites, daily$date, sep = "_")
+
+daily.exp <-
+  merge(
+    sitexdate,
+    daily,
+    by.x = c("site_date"),
+    by.y = c("site_date"),
+    all.x = TRUE
+  )
+dim(daily.exp) #2176   25
+
+daily.exp <-
+  merge(
+    daily.exp,
+    site_ord,
+    by.x = c("site"),
+    by.y = c("sites"),
+    all.x = TRUE
+  )
+dim(daily.exp) #2013   26
+
+levels(as.factor(daily.exp$hab_loc))
+lev <- levels(as.factor(daily.exp$site))
+
+png("./Figures_11-10-24/sci_faith_drop_data_completeness_so_sites_2024_11.10.24.png", width = 9.0, height = 5.5, units = 'in', res = 600)
+series <- ggplot(daily.exp, aes(date.x, site.ord.y, colour = hab_loc)) + 
+  geom_line(aes(group = factor(site.ord.y)), size = 8) + #MCMCglmm estimates only
+  scale_color_manual(values=c("darkgreen", "green", "darkorange3", "orange")) + 
+  #annotate("text", x = daily.exp$date.x[1005], y = 1:17, label = lev) +
+  theme(axis.text = element_text(size = 16)) + 
+  theme(panel.grid.major = element_line(colour = "white")) + 
+  theme(panel.grid.minor = element_line(colour = "white")) + 
+  theme(panel.border = element_rect(color = "black", size = 1)) +
+  #theme(axis.title.x=element_blank()) +
+  #theme(legend.title=element_blank()) +
+  guides(fill = guide_legend(title = "Location type", title.theme = element_text(size = 16))) + 
+  labs(y = expression("Time series")) +
+  labs(x = expression("")) +
+  labs(color='Landscape type') +
+  theme(axis.title.y=element_text(size = 16)) +
+  theme(axis.title.x=element_text(size = 16)) +
+  theme(axis.text.x=element_text(size = 16, angle=45, hjust=1)) +
+  theme(legend.title=element_text(size = 14)) +
+  theme(legend.text=element_text(size = 16)) +
+  theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, unit = "cm"))
+#coord_flip() +
+#scale_y_continuous(limits = c(-0.8, 2))
+series
+dev.off()
 
 
 
