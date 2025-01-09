@@ -89,9 +89,259 @@ bird.model <-
 
 
 #-------------------------------------------------------------------------------
+#Function to extract two-way interaction terms--------------------------------
+
+
+#define function for ext_day_fact * loc_hab * month_fact' interaction
+ext_day.2int.est <- function(brmsmod, extreme_var) {
+  
+  #Get posterior estimates of there-way interactions--------------------------------
+  params <- as.data.frame(fixef(brmsmod, summary = FALSE)) #
+  dim(params) #525  25
+  
+  if(extreme_var == "ext_day_fact"){ 
+    
+    #Calculate mean biomass and slopes for each category
+    params$urbanopen_notext <-  params$`Intercept`
+    params$urbanopen_ext <-
+      params$`Intercept` + params$`ext_day_factextreme`
+    params$urbanforest_notext <-
+      params$`Intercept` + params$`loc_haburbanforest`
+    params$urbanforest_ext <-
+      params$`Intercept` + params$`loc_haburbanforest` + 
+      params$`ext_day_factextreme` + params$`ext_day_factextreme:loc_haburbanforest`
+    params$exurbanopen_notext <-
+      params$`Intercept` + params$`loc_habexurbanopen`
+    params$exurbanopen_ext <-
+      params$`Intercept` + params$`loc_habexurbanopen` + 
+      params$`ext_day_factextreme` + params$`ext_day_factextreme:loc_habexurbanopen`
+    params$exurbanforest_notext <-
+      params$`Intercept` + params$`loc_habexurbanforest`
+    params$exurbanforest_ext <-
+      params$`Intercept` + params$`loc_habexurbanforest` + 
+      params$`ext_day_factextreme` + params$`ext_day_factextreme:loc_habexurbanforest`
+    
+    #calculate contrasts
+    
+    params$urbanopen_cntrst <- params$urbanopen_notext - params$urbanopen_ext
+    params$urbanforest_cntrst <- params$urbanforest_notext - params$urbanforest_ext
+    params$exurbanopen_cntrst <- params$exurbanopen_notext - params$exurbanopen_ext
+    params$exurbanforest_cntrst <- params$exurbanforest_notext - params$exurbanforest_ext
+    
+    
+    cntrst_cols <- c("urbanopen_cntrst", "urbanforest_cntrst", "exurbanopen_cntrst",
+                     "exurbanforest_cntrst")
+    
+    contrasts <-
+      data.frame(mean = apply(params[, cntrst_cols], 2, FUN = mean, na.rm = TRUE))
+    contrasts <-
+      cbind(contrasts, t(apply(
+        params[, cntrst_cols],
+        2,
+        quantile,
+        probs = c(0.025, 0.975),
+        na.rm = TRUE
+      )))
+    
+    colnames(contrasts)[2:3] <- c("LCI", "UCI")
+    contrasts$contrasts <- rownames(contrasts)
+    contrasts$sig <-ifelse(contrasts$LCI < 0 & contrasts$UCI > 0, "No", "Yes")
+    
+    contrasts$outcome <- ifelse(
+      contrasts$sig == "Yes" &
+        contrasts$mean > 0,
+      "less vocalization during extremes",
+      
+      ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean < 0,
+        "more vocalization during extremes",
+        " - "
+      )
+    )
+    
+    
+  } else{
+    
+    
+    if(extreme_var == "ext_day_vpd"){ 
+      
+      #Calculate estimates for each combination of vactor levels
+      params$urbanopen_notext <-  params$`Intercept`
+      params$urbanopen_ext <-
+        params$`Intercept` + params$`ext_day_vpdextreme`
+      params$urbanopen_extvpd <-
+        params$`Intercept` + params$`ext_day_vpdextremehighvpd`
+      
+      params$urbanforest_notext <-
+        params$`Intercept` + params$`loc_haburbanforest`
+      params$urbanforest_ext <-
+        params$`Intercept` + params$`loc_haburbanforest` + 
+        params$`ext_day_vpdextreme` + params$`ext_day_vpdextreme:loc_haburbanforest`
+      params$urbanforest_extvpd <-
+        params$`Intercept` + params$`loc_haburbanforest` + 
+        params$`ext_day_vpdextremehighvpd` + params$`ext_day_vpdextremehighvpd:loc_haburbanforest`
+      
+      params$exurbanopen_notext <-
+        params$`Intercept` + params$`loc_habexurbanopen`
+      params$exurbanopen_ext <-
+        params$`Intercept` + params$`loc_habexurbanopen` + 
+        params$`ext_day_vpdextreme` + params$`ext_day_vpdextreme:loc_habexurbanopen`
+      params$exurbanopen_extvpd <-
+        params$`Intercept` + params$`loc_habexurbanopen` + 
+        params$`ext_day_vpdextremehighvpd` + params$`ext_day_vpdextremehighvpd:loc_habexurbanopen`
+      
+      params$exurbanforest_notext <-
+        params$`Intercept` + params$`loc_habexurbanforest`
+      params$exurbanforest_ext <-
+        params$`Intercept` + params$`loc_habexurbanforest` + 
+        params$`ext_day_vpdextreme` + params$`ext_day_vpdextreme:loc_habexurbanforest`
+      params$exurbanforest_extvpd <-
+        params$`Intercept` + params$`loc_habexurbanforest` + 
+        params$`ext_day_vpdextremehighvpd` + params$`ext_day_vpdextremehighvpd:loc_habexurbanforest`
+      
+      
+      
+      #calculate contrasts
+      params$urbanopen_cntrst <- params$urbanopen_notext - params$urbanopen_ext
+      params$urbanopen_vpd_cntrst <- params$urbanopen_notext - params$urbanopen_extvpd
+      
+      params$urbanforest_cntrst <- params$urbanforest_notext - params$urbanforest_ext
+      params$urbanforest_vpd_cntrst <- params$urbanforest_notext - params$urbanforest_extvpd
+      
+      params$exurbanopen_cntrst <- params$exurbanopen_notext - params$exurbanopen_ext
+      params$exurbanopen_vpd_cntrst <- params$exurbanopen_notext - params$exurbanopen_extvpd
+      
+      params$exurbanforest_cntrst <- params$exurbanforest_notext - params$exurbanforest_ext
+      params$exurbanforest_vpd_cntrst <- params$exurbanforest_notext - params$exurbanforest_extvpd
+      
+      
+      cntrst_cols <- c("urbanopen_cntrst",  "urbanopen_vpd_cntrst", "urbanforest_cntrst", 
+                       "urbanforest_vpd_cntrst", "exurbanopen_cntrst", "exurbanopen_vpd_cntrst",
+                       "exurbanforest_cntrst", "exurbanforest_vpd_cntrst")
+      
+      contrasts <-
+        data.frame(mean = apply(params[, cntrst_cols], 2, FUN = mean, na.rm = TRUE))
+      contrasts <-
+        cbind(contrasts, t(apply(
+          params[, cntrst_cols],
+          2,
+          quantile,
+          probs = c(0.025, 0.975),
+          na.rm = TRUE
+        )))
+      
+      colnames(contrasts)[2:3] <- c("LCI", "UCI")
+      contrasts$contrasts <- rownames(contrasts)
+      contrasts$sig <-ifelse(contrasts$LCI < 0 & contrasts$UCI > 0, "No", "Yes")
+      
+      contrasts$outcome <- ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean > 0,
+        "less vocalization during extremes",
+        
+        ifelse(
+          contrasts$sig == "Yes" &
+            contrasts$mean < 0,
+          "more vocalization during extremes",
+          " - "
+        )
+      )
+      
+    } else{
+      
+      #Calculate estimates for each combination of vactor levels
+      params$urbanopen_notext <-  params$`Intercept`
+      params$urbanopen_ext <-
+        params$`Intercept` + params$`ext_day_wbtextreme`
+      params$urbanopen_extwbt <-
+        params$`Intercept` + params$`ext_day_wbtextremehighwbt`
+      
+      params$urbanforest_notext <-
+        params$`Intercept` + params$`loc_haburbanforest`
+      params$urbanforest_ext <-
+        params$`Intercept` + params$`loc_haburbanforest` + 
+        params$`ext_day_wbtextreme` + params$`ext_day_wbtextreme:loc_haburbanforest`
+      params$urbanforest_extwbt <-
+        params$`Intercept` + params$`loc_haburbanforest` + 
+        params$`ext_day_wbtextremehighwbt` + params$`ext_day_wbtextremehighwbt:loc_haburbanforest`
+      
+      params$exurbanopen_notext <-
+        params$`Intercept` + params$`loc_habexurbanopen`
+      params$exurbanopen_ext <-
+        params$`Intercept` + params$`loc_habexurbanopen` + 
+        params$`ext_day_wbtextreme` + params$`ext_day_wbtextreme:loc_habexurbanopen`
+      params$exurbanopen_extwbt <-
+        params$`Intercept` + params$`loc_habexurbanopen` + 
+        params$`ext_day_wbtextremehighwbt` + params$`ext_day_wbtextremehighwbt:loc_habexurbanopen`
+      
+      params$exurbanforest_notext <-
+        params$`Intercept` + params$`loc_habexurbanforest`
+      params$exurbanforest_ext <-
+        params$`Intercept` + params$`loc_habexurbanforest` + 
+        params$`ext_day_wbtextreme` + params$`ext_day_wbtextreme:loc_habexurbanforest`
+      params$exurbanforest_extwbt <-
+        params$`Intercept` + params$`loc_habexurbanforest` + 
+        params$`ext_day_wbtextremehighwbt` + params$`ext_day_wbtextremehighwbt:loc_habexurbanforest`
+      
+      
+      
+      #calculate contrasts
+      params$urbanopen_cntrst <- params$urbanopen_notext - params$urbanopen_ext
+      params$urbanopen_wbt_cntrst <- params$urbanopen_notext - params$urbanopen_extwbt
+      
+      params$urbanforest_cntrst <- params$urbanforest_notext - params$urbanforest_ext
+      params$urbanforest_wbt_cntrst <- params$urbanforest_notext - params$urbanforest_extwbt
+      
+      params$exurbanopen_cntrst <- params$exurbanopen_notext - params$exurbanopen_ext
+      params$exurbanopen_wbt_cntrst <- params$exurbanopen_notext - params$exurbanopen_extwbt
+      
+      params$exurbanforest_cntrst <- params$exurbanforest_notext - params$exurbanforest_ext
+      params$exurbanforest_wbt_cntrst <- params$exurbanforest_notext - params$exurbanforest_extwbt
+      
+      
+      cntrst_cols <- c("urbanopen_cntrst",  "urbanopen_wbt_cntrst", "urbanforest_cntrst", 
+                       "urbanforest_wbt_cntrst", "exurbanopen_cntrst", "exurbanopen_wbt_cntrst",
+                       "exurbanforest_cntrst", "exurbanforest_wbt_cntrst")
+      
+      contrasts <-
+        data.frame(mean = apply(params[, cntrst_cols], 2, FUN = mean, na.rm = TRUE))
+      contrasts <-
+        cbind(contrasts, t(apply(
+          params[, cntrst_cols],
+          2,
+          quantile,
+          probs = c(0.025, 0.975),
+          na.rm = TRUE
+        )))
+      
+      colnames(contrasts)[2:3] <- c("LCI", "UCI")
+      contrasts$contrasts <- rownames(contrasts)
+      contrasts$sig <-ifelse(contrasts$LCI < 0 & contrasts$UCI > 0, "No", "Yes")
+      
+      contrasts$outcome <- ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean > 0,
+        "less vocalization during extremes",
+        
+        ifelse(
+          contrasts$sig == "Yes" &
+            contrasts$mean < 0,
+          "more vocalization during extremes",
+          " - "
+        )
+      )
+      
+    }
+  }
+  
+  return(contrasts)
+  
+}
+
+
+#-------------------------------------------------------------------------------
 #Function to extract three-way interaction terms--------------------------------
-
-
 
 #define function for ext_day_fact * loc_hab * month_fact' interaction
 ext_day.3int.est <- function(brmsmod, extreme_var) {
@@ -234,6 +484,12 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
       )
     )
     
+    contrasts$caution <- ifelse(
+      contrasts$sig == "Yes" &
+        contrasts$mean > 20 | contrasts$mean < -20,
+      "large contrast - may be estimation issue",
+      " - "
+    )
     
     #get estimates as predicted counts for plotting
     
@@ -508,6 +764,12 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
         )
       )
       
+      contrasts$caution <- ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean > 20 | contrasts$mean < -20,
+        "large contrast - may be estimation issue",
+        " - "
+      )
       
       
       colnames(params)
@@ -521,13 +783,54 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
         ))
       detach("package:dplyr", unload = TRUE)
       
+      
+      cols <-
+        c(
+          "urbanopen_notext_6_cnt",
+          "urbanopen_ext_6_cnt",
+          "urbanopen_extvpd_6_cnt",
+          "urbanopen_notext_7_cnt",
+          "urbanopen_ext_7_cnt",
+          "urbanopen_extvpd_7_cnt",
+          "urbanopen_notext_8_cnt",
+          "urbanopen_ext_8_cnt",
+          "urbanopen_extvpd_8_cnt",
+          "urbanforest_notext_6_cnt",
+          "urbanforest_ext_6_cnt",
+          "urbanforest_extvpd_6_cnt",
+          "urbanforest_notext_7_cnt",
+          "urbanforest_ext_7_cnt",
+          "urbanforest_extvpd_7_cnt",
+          "urbanforest_notext_8_cnt",
+          "urbanforest_ext_8_cnt",
+          "urbanforest_extvpd_8_cnt",
+          "exurbanopen_notext_6_cnt",
+          "exurbanopen_ext_6_cnt",
+          "exurbanopen_extvpd_6_cnt",
+          "exurbanopen_notext_7_cnt",
+          "exurbanopen_ext_7_cnt",
+          "exurbanopen_extvpd_7_cnt",
+          "exurbanopen_notext_8_cnt",
+          "exurbanopen_ext_8_cnt",
+          "exurbanopen_extvpd_8_cnt",
+          "exurbanforest_notext_6_cnt",
+          "exurbanforest_ext_6_cnt",
+          "exurbanforest_extvpd_6_cnt",
+          "exurbanforest_notext_7_cnt",
+          "exurbanforest_ext_7_cnt",
+          "exurbanforest_extvpd_7_cnt",
+          "exurbanforest_notext_8_cnt",
+          "exurbanforest_ext_8_cnt",
+          "exurbanforest_extvpd_8_cnt"
+        )
+      
       #get means into data frame for plotting
       colnames(params_cnt)
       est <-
-        data.frame(mean = apply(params_cnt[, c(74:109)], 2, FUN = mean, na.rm = TRUE))
+        data.frame(mean = apply(params_cnt[, cols], 2, FUN = mean, na.rm = TRUE))
       est <-
         cbind(est, t(apply(
-          params_cnt[, c(74:109)],
+          params_cnt[, cols],
           2,
           quantile,
           probs = c(0.025, 0.975),
@@ -740,7 +1043,12 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
         )
       )
       
-      
+      contrasts$caution <- ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean > 20 | contrasts$mean < -20,
+        "large contrast - may be estimation issue",
+        " - "
+      )
       
       library(dplyr)
       params_cnt <- params %>%
@@ -751,13 +1059,54 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
         ))
       detach("package:dplyr", unload = TRUE)
       
+      cols <-
+        c(
+          "urbanopen_notext_6_cnt",
+          "urbanopen_ext_6_cnt",
+          "urbanopen_extwbt_6_cnt",
+          "urbanopen_notext_7_cnt",
+          "urbanopen_ext_7_cnt",
+          "urbanopen_extwbt_7_cnt",
+          "urbanopen_notext_8_cnt",
+          "urbanopen_ext_8_cnt",
+          "urbanopen_extwbt_8_cnt",
+          "urbanforest_notext_6_cnt",
+          "urbanforest_ext_6_cnt",
+          "urbanforest_extwbt_6_cnt",
+          "urbanforest_notext_7_cnt",
+          "urbanforest_ext_7_cnt",
+          "urbanforest_extwbt_7_cnt",
+          "urbanforest_notext_8_cnt",
+          "urbanforest_ext_8_cnt",
+          "urbanforest_extwbt_8_cnt",
+          "exurbanopen_notext_6_cnt",
+          "exurbanopen_ext_6_cnt",
+          "exurbanopen_extwbt_6_cnt",
+          "exurbanopen_notext_7_cnt",
+          "exurbanopen_ext_7_cnt",
+          "exurbanopen_extwbt_7_cnt",
+          "exurbanopen_notext_8_cnt",
+          "exurbanopen_ext_8_cnt",
+          "exurbanopen_extwbt_8_cnt",
+          "exurbanforest_notext_6_cnt",
+          "exurbanforest_ext_6_cnt",
+          "exurbanforest_extwbt_6_cnt",
+          "exurbanforest_notext_7_cnt",
+          "exurbanforest_ext_7_cnt",
+          "exurbanforest_extwbt_7_cnt",
+          "exurbanforest_notext_8_cnt",
+          "exurbanforest_ext_8_cnt",
+          "exurbanforest_extwbt_8_cnt"
+        )
+      
+      
       #get means into data frame for plotting
       colnames(params_cnt)
       est <-
-        data.frame(mean = apply(params_cnt[, c(74:109)], 2, FUN = mean, na.rm = TRUE))
+        data.frame(mean = apply(params_cnt[, cols], 2, FUN = mean, na.rm = TRUE))
       est <-
         cbind(est, t(apply(
-          params_cnt[, c(74:109)],
+          params_cnt[, cols],
           2,
           quantile,
           probs = c(0.025, 0.975),
@@ -803,6 +1152,290 @@ ext_day.3int.est <- function(brmsmod, extreme_var) {
 
 
 #-------------------------------------------------------------------------------
+#Function to extract interaction terms for plotting diel analysis-------------------------
+
+#define function for ext_day_fact * loc_hab * month_fact' interaction
+diel_est <- function(brmsmod, interaction = "two-way") {
+  
+  
+  #Get posterior estimates of there-way interactions--------------------------------
+  params <- as.data.frame(fixef(brmsmod, summary = FALSE)) #
+  dim(params) #525  25
+  
+  if(interaction == "two-way"){ 
+    
+    #Calculate means for each category
+    params$morning_notext <-  params$`Intercept`
+    params$morning_ext <-
+      params$`Intercept` + params$`ext_day_factextreme`
+    params$midday_notext <-
+      params$`Intercept` + params$`periodmidday`
+    params$midday_ext <-
+      params$`Intercept` + params$`ext_day_factextreme` + 
+      params$`periodmidday` + params$`ext_day_factextreme:periodmidday`
+    params$evening_notext <-
+      params$`Intercept` + params$`periodevening`
+    params$evening_ext <-
+      params$`Intercept` + params$`ext_day_factextreme` + 
+      params$`periodevening` + params$`ext_day_factextreme:periodevening`
+    
+    #calculate contrasts
+    
+    params$morning_cntrst <- params$morning_notext - params$morning_ext
+    params$midday_cntrst <- params$midday_notext - params$midday_ext
+    params$evening_cntrst <- params$evening_notext - params$evening_ext
+    
+    
+    cntrst_cols <- c("morning_cntrst", "midday_cntrst", "evening_cntrst")
+    
+    contrasts <-
+      data.frame(mean = apply(params[, cntrst_cols], 2, FUN = mean, na.rm = TRUE))
+    contrasts <-
+      cbind(contrasts, t(apply(
+        params[, cntrst_cols],
+        2,
+        quantile,
+        probs = c(0.025, 0.975),
+        na.rm = TRUE
+      )))
+    
+    colnames(contrasts)[2:3] <- c("LCI", "UCI")
+    contrasts$contrasts <- rownames(contrasts)
+    contrasts$sig <-ifelse(contrasts$LCI < 0 & contrasts$UCI > 0, "No", "Yes")
+    
+    contrasts$outcome <- ifelse(
+      contrasts$sig == "Yes" &
+        contrasts$mean > 0,
+      "less vocalization during extremes",
+      
+      ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean < 0,
+        "more vocalization during extremes",
+        " - "
+      )
+    )
+    
+    return(contrasts)
+    
+  } else{
+    
+    
+    #Calculate mean biomass and slopes for each category
+    params$urbanopen_notext_morn <-  params$`Intercept`
+    params$urbanopen_ext_morn <-
+      params$`Intercept` + params$`ext_day_factextreme`
+    params$urbanopen_notext_mid <-
+      params$`Intercept` + params$`periodmidday`
+    params$urbanopen_ext_mid <-
+      params$`Intercept` + params$`ext_day_factextreme` + params$`periodmidday`
+    params$urbanopen_notext_eve <-
+      params$`Intercept` + params$`periodevening`
+    params$urbanopen_ext_eve <-
+      params$`Intercept` + params$`ext_day_factextreme` + params$`periodevening`
+    
+    params$urbanforest_notext_morn <-
+      params$`Intercept` + params$`loc_haburbanforest`
+    params$urbanforest_ext_morn <-
+      params$`Intercept` + params$`loc_haburbanforest` + params$`ext_day_factextreme` +
+      params$`ext_day_factextreme:loc_haburbanforest`
+    params$urbanforest_notext_mid <-
+      params$`Intercept` + params$`loc_haburbanforest` + params$`periodmidday` +
+      params$`loc_haburbanforest:periodmidday`
+    params$urbanforest_ext_mid <-
+      params$`Intercept` + params$`loc_haburbanforest` + params$`ext_day_factextreme` +
+      params$`periodmidday` + params$`ext_day_factextreme:loc_haburbanforest` +
+      params$`ext_day_factextreme:periodmidday` +  params$`loc_haburbanforest:periodmidday` +
+      params$`ext_day_factextreme:loc_haburbanforest:periodmidday`
+    params$urbanforest_notext_eve <-
+      params$`Intercept` + params$`loc_haburbanforest` + params$`periodevening` +
+      params$`loc_haburbanforest:periodevening`
+    params$urbanforest_ext_eve <-
+      params$`Intercept` + params$`loc_haburbanforest` + params$`ext_day_factextreme` +
+      params$`periodevening` + params$`ext_day_factextreme:loc_haburbanforest` +
+      params$`ext_day_factextreme:periodevening` +  params$`loc_haburbanforest:periodevening` +
+      params$`ext_day_factextreme:loc_haburbanforest:periodevening`
+    
+    params$exurbanopen_notext_morn <-
+      params$`Intercept` + params$`loc_habexurbanopen`
+    params$exurbanopen_ext_morn <-
+      params$`Intercept` + params$`loc_habexurbanopen` + params$`ext_day_factextreme` +
+      params$`ext_day_factextreme:loc_habexurbanopen`
+    params$exurbanopen_notext_mid <-
+      params$`Intercept` + params$`loc_habexurbanopen` + params$`periodmidday` +
+      params$`loc_habexurbanopen:periodmidday`
+    params$exurbanopen_ext_mid <-
+      params$`Intercept` + params$`loc_habexurbanopen` + params$`ext_day_factextreme` +
+      params$`periodmidday` + params$`ext_day_factextreme:loc_habexurbanopen` +
+      params$`ext_day_factextreme:periodmidday` +  params$`loc_habexurbanopen:periodmidday` +
+      params$`ext_day_factextreme:loc_habexurbanopen:periodmidday`
+    params$exurbanopen_notext_eve <-
+      params$`Intercept` + params$`loc_habexurbanopen` + params$`periodevening` +
+      params$`loc_habexurbanopen:periodevening`
+    params$exurbanopen_ext_eve <-
+      params$`Intercept` + params$`loc_habexurbanopen` + params$`ext_day_factextreme` +
+      params$`periodevening` + params$`ext_day_factextreme:loc_habexurbanopen` +
+      params$`ext_day_factextreme:periodevening` +  params$`loc_habexurbanopen:periodevening` +
+      params$`ext_day_factextreme:loc_habexurbanopen:periodevening`
+    
+    params$exurbanforest_notext_morn <-
+      params$`Intercept` + params$`loc_habexurbanforest`
+    params$exurbanforest_ext_morn <-
+      params$`Intercept` + params$`loc_habexurbanforest` + params$`ext_day_factextreme` +
+      params$`ext_day_factextreme:loc_habexurbanforest`
+    params$exurbanforest_notext_mid <-
+      params$`Intercept` + params$`loc_habexurbanforest` + params$`periodmidday` +
+      params$`loc_habexurbanforest:periodmidday`
+    params$exurbanforest_ext_mid <-
+      params$`Intercept` + params$`loc_habexurbanforest` + params$`ext_day_factextreme` +
+      params$`periodmidday` + params$`ext_day_factextreme:loc_habexurbanforest` +
+      params$`ext_day_factextreme:periodmidday` +  params$`loc_habexurbanforest:periodmidday` +
+      params$`ext_day_factextreme:loc_habexurbanforest:periodmidday`
+    params$exurbanforest_notext_eve <-
+      params$`Intercept` + params$`loc_habexurbanforest` + params$`periodevening` +
+      params$`loc_habexurbanforest:periodevening`
+    params$exurbanforest_ext_eve <-
+      params$`Intercept` + params$`loc_habexurbanforest` + params$`ext_day_factextreme` +
+      params$`periodevening` + params$`ext_day_factextreme:loc_habexurbanforest` +
+      params$`ext_day_factextreme:periodevening` +  params$`loc_habexurbanforest:periodevening` +
+      params$`ext_day_factextreme:loc_habexurbanforest:periodevening`
+    
+    colnames(params)
+    
+    #get contrasts
+    params$urbanopen_cntrst_morn <- params$urbanopen_notext_morn - params$urbanopen_ext_morn
+    params$urbanopen_cntrst_mid <- params$urbanopen_notext_mid - params$urbanopen_ext_mid
+    params$urbanopen_cntrst_eve <- params$urbanopen_notext_eve - params$urbanopen_ext_eve
+    
+    params$urbanforest_cntrst_morn <- params$urbanforest_notext_morn - params$urbanforest_ext_morn
+    params$urbanforest_cntrst_mid <- params$urbanforest_notext_mid - params$urbanforest_ext_mid
+    params$urbanforest_cntrst_eve <- params$urbanforest_notext_eve - params$urbanforest_ext_eve
+    
+    params$exurbanopen_cntrst_morn <- params$exurbanopen_notext_morn - params$exurbanopen_ext_morn
+    params$exurbanopen_cntrst_mid <- params$exurbanopen_notext_mid - params$exurbanopen_ext_mid
+    params$exurbanopen_cntrst_eve <- params$exurbanopen_notext_eve - params$exurbanopen_ext_eve
+    
+    params$exurbanforest_cntrst_morn <- params$exurbanforest_notext_morn - params$exurbanforest_ext_morn
+    params$exurbanforest_cntrst_mid <- params$exurbanforest_notext_mid - params$exurbanforest_ext_mid
+    params$exurbanforest_cntrst_eve <- params$exurbanforest_notext_eve - params$exurbanforest_ext_eve
+    
+    
+    cntrst_cols <- c("urbanopen_cntrst_morn", "urbanopen_cntrst_mid", "urbanopen_cntrst_eve",
+                     "urbanforest_cntrst_morn", "urbanforest_cntrst_mid", "urbanforest_cntrst_eve",
+                     "exurbanopen_cntrst_morn", "exurbanopen_cntrst_mid", "exurbanopen_cntrst_eve",
+                     "exurbanforest_cntrst_morn", "exurbanforest_cntrst_mid", "exurbanforest_cntrst_eve")
+    
+    contrasts <-
+      data.frame(mean = apply(params[, cntrst_cols], 2, FUN = mean, na.rm = TRUE))
+    contrasts <-
+      cbind(contrasts, t(apply(
+        params[, cntrst_cols],
+        2,
+        quantile,
+        probs = c(0.025, 0.975),
+        na.rm = TRUE
+      )))
+    
+    colnames(contrasts)[2:3] <- c("LCI", "UCI")
+    contrasts$contrasts <- rownames(contrasts)
+    contrasts$sig <-ifelse(contrasts$LCI < 0 & contrasts$UCI > 0, "No", "Yes")
+    
+    contrasts$outcome <- ifelse(
+      contrasts$sig == "Yes" &
+        contrasts$mean > 0,
+      "less vocalization during extremes",
+      
+      ifelse(
+        contrasts$sig == "Yes" &
+          contrasts$mean < 0,
+        "more vocalization during extremes",
+        " - "
+      )
+    )
+    
+    contrasts$caution <- ifelse(
+      contrasts$sig == "Yes" &
+        contrasts$mean > 20 | contrasts$mean < -20,
+      "large contrast - may be estimation issue",
+      " - "
+    )
+    
+    #get estimates as predicted counts for plotting
+    
+    library(dplyr)
+    params_cnt <- params %>%
+      mutate(across(
+        .cols = 28:51,
+        .fns = exp,
+        .names = "{.col}_cnt"
+      ))
+    detach("package:dplyr", unload = TRUE)
+    
+    #get means into data frame for plotting
+    
+    cols <-
+      c(
+        "urbanopen_notext_morn_cnt",
+        "urbanopen_ext_morn_cnt",
+        "urbanopen_notext_mid_cnt",
+        "urbanopen_ext_mid_cnt",
+        "urbanopen_notext_eve_cnt",
+        "urbanopen_ext_eve_cnt",
+        "urbanforest_notext_morn_cnt",
+        "urbanforest_ext_morn_cnt",
+        "urbanforest_notext_mid_cnt",
+        "urbanforest_ext_mid_cnt",
+        "urbanforest_notext_eve_cnt",
+        "urbanforest_ext_eve_cnt",
+        "exurbanopen_notext_morn_cnt",
+        "exurbanopen_ext_morn_cnt",
+        "exurbanopen_notext_mid_cnt",
+        "exurbanopen_ext_mid_cnt",
+        "exurbanopen_notext_eve_cnt",
+        "exurbanopen_ext_eve_cnt",
+        "exurbanforest_notext_morn_cnt",
+        "exurbanforest_ext_morn_cnt",
+        "exurbanforest_notext_mid_cnt",
+        "exurbanforest_ext_mid_cnt",
+        "exurbanforest_notext_eve_cnt",
+        "exurbanforest_ext_eve_cnt"
+      )
+    
+    est <-
+      data.frame(mean = apply(params_cnt[, cols], 2, FUN = mean, na.rm = TRUE))
+    est <-
+      cbind(est, t(apply(
+        params_cnt[, cols],
+        2,
+        quantile,
+        probs = c(0.025, 0.975),
+        na.rm = TRUE
+      )))
+    
+    est$loc_hab <-
+      c(
+        rep("urban open", 6),
+        rep("urban forest", 6),
+        rep("exurban open", 6),
+        rep("exurban forest", 6)
+      )
+    est$extreme <- rep(c("not extreme", "extreme"), 12)
+    est$period <-
+      rep(c("Morning", "Morning", "Midday", "Midday", "Evening", "Evening"), 4)
+    colnames(est)[2:3] <- c("LCI", "UCI")
+    
+  }
+  
+  
+  est_cntrst <- list(est, contrasts)
+  names(est_cntrst) <- c("count estimates", "contrasts")
+  
+  return(est_cntrst)
+  
+}
+
+
+#-------------------------------------------------------------------------------
 #Make the plot------------------------------------------------------------------
 
 #Define function to make plots for models with three way interactions
@@ -813,7 +1446,8 @@ bird_plot_3way <- function(est,
                            variable,
                            save = FALSE,
                            date = "12-11-24",
-                           path = "./Figures_12-4-24/") {
+                           path = "./Figures_12-4-24/",
+                           facetvar = "month") {
   
   
   est$extreme <- as.factor(est$extreme)
@@ -830,20 +1464,47 @@ bird_plot_3way <- function(est,
       factor(est$extreme,
              levels = c("not extreme", "extreme"))
     
-    est$month <- as.factor(est$month)
-    est$month <-
-      factor(est$month,
-             levels = c("June", "July", "August"))
+    
+    if (facetvar == "month") {
+      
+      est$month <- as.factor(est$month)
+      est$month <-
+        factor(est$month,
+               levels = c("June", "July", "August"))
+      
+      est$facetby <- est$month
+      est$xvar <- est$loc_hab
+      
+      fname <-
+        paste0("ext_day_fact_hab_month_", response, "_", date, ".png")
+      
+      
+      
+    } else{
+      
+      est$period <- as.factor(est$period)
+      est$period <-
+        factor(est$period,
+               levels = c("Morning", "Midday", "Evening"))
+      
+      est$facetby <- est$loc_hab
+      est$xvar <- est$period
+      
+      fname <-
+        paste0("ext_day_fact_hab_period_", response, "_", date, ".png")
+      
+      
+    }
     
     
     effect_plot <-
       ggplot(est, aes(
-        loc_hab,
+        xvar,
         mean,
         color = factor(extreme),
         fill = factor(extreme)
       )) +
-      facet_grid(rows = vars(month), scales = "free") +
+      facet_grid(rows = vars(facetby), scales = "free") +
       geom_errorbar(
         aes(
           y = mean,
@@ -885,8 +1546,6 @@ bird_plot_3way <- function(est,
       theme(plot.margin = unit(c(0.3, 0.3, 0.3, 0.3), "cm"))
     effect_plot
     
-    fname <-
-      paste0("ext_day_fact_hab_month_", response, "_", date, ".png")
     
     if (save == TRUE) {
       
