@@ -1,0 +1,121 @@
+mean,LCI,UCI,contrasts,sig,outcome,caution,species,habitat,month,est
+-0.2541859768793738,-0.8129204924694988,0.2564820860075849,urbanopen_cntrst_6,No, - , - ,American Goldfinch,Urban open,June,-0.2541859768793738
+-0.23498862489354927,-0.6649802565540025,0.23207717843220177,urbanopen_cntrst_7,No, - , - ,American Goldfinch,Urban open,July,-0.23498862489354927
+-0.24424694178493198,-0.6820800104939049,0.19639371970517258,urbanopen_cntrst_8,No, - , - ,American Goldfinch,Urban open,August,-0.24424694178493198
+-0.4674744598361869,-1.2037692732179726,0.20366487354572052,urbanforest_cntrst_6,No, - , - ,American Goldfinch,Urban forest,June,-0.4674744598361869
+78.66239041698717,5.67046550341462,210.87325900576093,urbanforest_cntrst_7,Yes,less vocalization during extremes,large contrast - may be estimation issue,American Goldfinch,Urban forest,July,2
+0.6566702441936038,-0.4064736964300799,1.7988671284720776,urbanforest_cntrst_8,No, - , - ,American Goldfinch,Urban forest,August,0.6566702441936038
+-0.0306704136535332,-0.6467753302472384,0.6089835874906958,exurbanopen_cntrst_6,No, - , - ,American Goldfinch,Exurban open,June,-0.0306704136535332
+0.3494008462557791,-0.22696059735718668,0.9710700726570546,exurbanopen_cntrst_7,No, - , - ,American Goldfinch,Exurban open,July,0.3494008462557791
+-0.39053868690672683,-0.9971311815158594,0.19647453812121674,exurbanopen_cntrst_8,No, - , - ,American Goldfinch,Exurban open,August,-0.39053868690672683
+0.023063061833321727,-0.82538597829743,1.0286421302424185,exurbanforest_cntrst_6,No, - , - ,American Goldfinch,Exurban forest,June,0.023063061833321727
+1.9682320997763498,1.275416317899234,2.8468690997850232,exurbanforest_cntrst_7,Yes,less vocalization during extremes, - ,American Goldfinch,Exurban forest,July,1.9682320997763498
+-1.1815615062449125,-1.6606050758224973,-0.694696793401923,exurbanforest_cntrst_8,Yes,more vocalization during extremes, - ,American Goldfinch,Exurban forest,August,-1.1815615062449125
+1.7618499918796915,0.996441137082522,2.4425284152316538,urbanopen_cntrst_6,Yes,less vocalization during extremes, - ,American Robin,Urban open,June,1.7618499918796915
+-0.7136567061737533,-1.2842125715684483,-0.16320513070546747,urbanopen_cntrst_7,Yes,more vocalization during extremes, - ,American Robin,Urban open,July,-0.7136567061737533
+-0.4018514953383545,-1.0968362989706213,0.32151511855270454,urbanopen_cntrst_8,No, - , - ,American Robin,Urban open,August,-0.4018514953383545
+1.0026964387320199,0.22526597352042174,1.6271449729345733,urbanforest_cntrst_6,Yes,less vocalization during extremes, - ,American Robin,Urban forest,June,1.0026964387320199
+-1.5562904110741602,-2.281958833196377,-0.8510394470531035,urbanforest_cntrst_7,Yes,more vocalization during extremes, - ,American Robin,Urban forest,July,-1.5562904110741602
+79.21891911391401,3.889297931509768,228.48156861194522,urbanforest_cntrst_8,Yes,less vocalization during extremes,large contrast - may be estimation issue,American Robin,Urban forest,August,2
+-1.2745994614055887,-2.3476385022822344,-0.21324919002374193,exurbanopen_cntrst_6,Yes,more vocalization during extremes, - ,American Robin,Exurban open,June,-1.2745994614055887
+-0.8134466350740143,-2.1937926727485064,0.6301157300596987,exurbanopen_cntrst_7,No, - , - ,American Robin,Exurban open,July,-0.8134466350740143
+39.319949774594456,-106.88409567602596,204.2804304719773,exurbanopen_cntrst_8,No, - , - ,American Robin,Exurban open,August,2
+0.5118756490223481,-0.19807592219716946,1.21129193389114,exurbanforest_cntrst_6,No, - , - ,American Robin,Exurban forest,June,0.5118756490223481
+-0.43093485711092877,-1.1662828758339758,0.3225922493014987,exurbanforest_cntrst_7,No, - , - ,American Robin,Exurban forest,July,-0.43093485711092877
+1.2281017867297852,-1.0480719867830015,4.447243468632172,exurbanforest_cntrst_8,No, - , - ,American Robin,Exurban forest,August,1.2281017867297852
+-0.6553155683192017,-1.5906126715710731,0.15779639941356202,urbanopen_cntrst_6,No, - , - ,Blue Jay,Urban open,June,-0.6553155683192017
+-0.21080405489408113,-0.8883145291203888,0.4088880636183564,urbanopen_cntrst_7,No, - , - ,Blue Jay,Urban open,July,-0.21080405489408113
+-0.1338910265473797,-0.8336245051734463,0.5377645518503246,urbanopen_cntrst_8,No, - , - ,Blue Jay,Urban open,August,-0.1338910265473797
+0.5354497893470852,-0.3947895284441378,1.3302422872406396,urbanforest_cntrst_6,No, - , - ,Blue Jay,Urban forest,June,0.5354497893470852
+0.08966399612145215,-0.7311154318395077,0.859570947932263,urbanforest_cntrst_7,No, - , - ,Blue Jay,Urban forest,July,0.08966399612145215
+0.5623671983797365,-0.22297090787309995,1.4021640953708268,urbanforest_cntrst_8,No, - , - ,Blue Jay,Urban forest,August,0.5623671983797365
+0.7154846062132001,-0.36141660689801564,1.7299348591045303,exurbanopen_cntrst_6,No, - , - ,Blue Jay,Exurban open,June,0.7154846062132001
+0.7577227202603879,-0.25741259697106356,1.6623535266837766,exurbanopen_cntrst_7,No, - , - ,Blue Jay,Exurban open,July,0.7577227202603879
+1.770987146811434,0.6221748668104131,2.858933657590595,exurbanopen_cntrst_8,Yes,less vocalization during extremes, - ,Blue Jay,Exurban open,August,1.770987146811434
+0.7430462604482363,-0.19110209074989434,1.5379815089620867,exurbanforest_cntrst_6,No, - , - ,Blue Jay,Exurban forest,June,0.7430462604482363
+-0.037331687762386954,-0.723263383483268,0.6064814399983803,exurbanforest_cntrst_7,No, - , - ,Blue Jay,Exurban forest,July,-0.037331687762386954
+1.2502102642113857,0.5249822053594998,1.9265896075540392,exurbanforest_cntrst_8,Yes,less vocalization during extremes, - ,Blue Jay,Exurban forest,August,1.2502102642113857
+-0.452980767749901,-1.4989421553208053,0.43553312560958213,urbanopen_cntrst_6,No, - , - ,Carolina Chickadee,Urban open,June,-0.452980767749901
+-0.24912822325314893,-1.2329454908440893,0.6251380592167279,urbanopen_cntrst_7,No, - , - ,Carolina Chickadee,Urban open,July,-0.24912822325314893
+-0.6929042516765128,-1.5957798101253151,0.1903401269779356,urbanopen_cntrst_8,No, - , - ,Carolina Chickadee,Urban open,August,-0.6929042516765128
+-1.033728815880782,-1.9686479777504975,-0.23698167162192718,urbanforest_cntrst_6,Yes,more vocalization during extremes, - ,Carolina Chickadee,Urban forest,June,-1.033728815880782
+-0.17848320472282378,-1.118672262554821,0.6941975499353392,urbanforest_cntrst_7,No, - , - ,Carolina Chickadee,Urban forest,July,-0.17848320472282378
+-1.0341213524646458,-1.9346673543350825,-0.07972232153598591,urbanforest_cntrst_8,Yes,more vocalization during extremes, - ,Carolina Chickadee,Urban forest,August,-1.0341213524646458
+-0.22855805301614204,-1.4612598050941161,0.9006569275111144,exurbanopen_cntrst_6,No, - , - ,Carolina Chickadee,Exurban open,June,-0.22855805301614204
+-0.7064027422467712,-1.8066876374990755,0.3290888383974491,exurbanopen_cntrst_7,No, - , - ,Carolina Chickadee,Exurban open,July,-0.7064027422467712
+0.5260511069372015,-0.6142438864324128,1.838634019093258,exurbanopen_cntrst_8,No, - , - ,Carolina Chickadee,Exurban open,August,0.5260511069372015
+-1.1359722737477957,-1.9308890333013635,-0.34229324730565064,exurbanforest_cntrst_6,Yes,more vocalization during extremes, - ,Carolina Chickadee,Exurban forest,June,-1.1359722737477957
+-0.003151808556347354,-0.7259735306825509,0.6968470699128558,exurbanforest_cntrst_7,No, - , - ,Carolina Chickadee,Exurban forest,July,-0.003151808556347354
+-0.7288161567835322,-1.507072274843793,0.05579894778483681,exurbanforest_cntrst_8,No, - , - ,Carolina Chickadee,Exurban forest,August,-0.7288161567835322
+-0.10614846827247923,-0.6604577207900019,0.4683372180534019,urbanopen_cntrst_6,No, - , - ,Carolina Wren,Urban open,June,-0.10614846827247923
+-0.12006471573174841,-0.5943932841963521,0.3674070962265776,urbanopen_cntrst_7,No, - , - ,Carolina Wren,Urban open,July,-0.12006471573174841
+-0.1910349243048744,-0.6863854575033237,0.27432798680851883,urbanopen_cntrst_8,No, - , - ,Carolina Wren,Urban open,August,-0.1910349243048744
+0.07517019210916467,-0.5423373809634686,0.6793064682524179,urbanforest_cntrst_6,No, - , - ,Carolina Wren,Urban forest,June,0.07517019210916467
+-0.12868178946877312,-0.6687982178707899,0.4048736011770605,urbanforest_cntrst_7,No, - , - ,Carolina Wren,Urban forest,July,-0.12868178946877312
+0.1572188162768278,-0.4084898392479777,0.7211850969816599,urbanforest_cntrst_8,No, - , - ,Carolina Wren,Urban forest,August,0.1572188162768278
+-0.5161906894731317,-1.276977521032626,0.09626458869141397,exurbanopen_cntrst_6,No, - , - ,Carolina Wren,Exurban open,June,-0.5161906894731317
+0.26011488582376574,-0.33852172445905465,0.8420135087496863,exurbanopen_cntrst_7,No, - , - ,Carolina Wren,Exurban open,July,0.26011488582376574
+0.5112273375854444,-0.12278215162799261,1.1462489032808412,exurbanopen_cntrst_8,No, - , - ,Carolina Wren,Exurban open,August,0.5112273375854444
+0.04488668556468337,-0.512316422841426,0.5421881547648888,exurbanforest_cntrst_6,No, - , - ,Carolina Wren,Exurban forest,June,0.04488668556468337
+-0.5207530051849817,-0.9685303909623475,-0.05042255193211143,exurbanforest_cntrst_7,Yes,more vocalization during extremes, - ,Carolina Wren,Exurban forest,July,-0.5207530051849817
+-0.17693544506386782,-0.6387349807740238,0.25159717281375726,exurbanforest_cntrst_8,No, - , - ,Carolina Wren,Exurban forest,August,-0.17693544506386782
+-0.1953900558704135,-2.4217799771560764,1.8843930031569407,urbanopen_cntrst_6,No, - , - ,Hairy Woodpecker,Urban open,June,-0.1953900558704135
+-1.696373094804638,-3.4113982119285677,-0.13654088378416177,urbanopen_cntrst_7,Yes,more vocalization during extremes, - ,Hairy Woodpecker,Urban open,July,-1.696373094804638
+0.709572366678451,-1.1449639965961862,2.698616289732973,urbanopen_cntrst_8,No, - , - ,Hairy Woodpecker,Urban open,August,0.709572366678451
+2.2463723323289067,-0.5946217967913716,5.392229926016064,urbanforest_cntrst_6,No, - , - ,Hairy Woodpecker,Urban forest,June,2
+1.1824538215966411,-1.6532822217297634,4.810630940917815,urbanforest_cntrst_7,No, - , - ,Hairy Woodpecker,Urban forest,July,1.1824538215966411
+-1.5082437035599991,-3.8206198303443224,0.4429104714891484,urbanforest_cntrst_8,No, - , - ,Hairy Woodpecker,Urban forest,August,-1.5082437035599991
+-2.7752780376110007,-5.48998276331376,-0.24107671326094787,exurbanopen_cntrst_6,Yes,more vocalization during extremes, - ,Hairy Woodpecker,Exurban open,June,-2.7752780376110007
+-0.06633749347206898,-2.774216474491932,2.059158000197561,exurbanopen_cntrst_7,No, - , - ,Hairy Woodpecker,Exurban open,July,-0.06633749347206898
+-1.4135953018093435,-3.70296249967038,0.6594805643486428,exurbanopen_cntrst_8,No, - , - ,Hairy Woodpecker,Exurban open,August,-1.4135953018093435
+-0.7496258281136513,-2.6508642831429237,0.6617674432094072,exurbanforest_cntrst_6,No, - , - ,Hairy Woodpecker,Exurban forest,June,-0.7496258281136513
+0.29328254354909544,-1.0328494393099001,1.4847902606419048,exurbanforest_cntrst_7,No, - , - ,Hairy Woodpecker,Exurban forest,July,0.29328254354909544
+-0.09253853600082297,-1.4292670605439504,1.244275086865939,exurbanforest_cntrst_8,No, - , - ,Hairy Woodpecker,Exurban forest,August,-0.09253853600082297
+-0.11443218014350931,-0.5840271864797872,0.30261476415921423,urbanopen_cntrst_6,No, - , - ,Northern Cardinal,Urban open,June,-0.11443218014350931
+-0.1332797387383872,-0.5136958461266572,0.21652518059209006,urbanopen_cntrst_7,No, - , - ,Northern Cardinal,Urban open,July,-0.1332797387383872
+0.3662359026303983,0.01363081626912881,0.692728412916184,urbanopen_cntrst_8,Yes,less vocalization during extremes, - ,Northern Cardinal,Urban open,August,0.3662359026303983
+-0.3961038346851314,-0.8780123485088467,0.05341920607547214,urbanforest_cntrst_6,No, - , - ,Northern Cardinal,Urban forest,June,-0.3961038346851314
+0.15530894584337887,-0.34348725845315664,0.6273906200451549,urbanforest_cntrst_7,No, - , - ,Northern Cardinal,Urban forest,July,0.15530894584337887
+0.16188874974200146,-0.2613029139861986,0.6231104188422192,urbanforest_cntrst_8,No, - , - ,Northern Cardinal,Urban forest,August,0.16188874974200146
+-0.05973489281740565,-0.6447159989381492,0.46958146713707066,exurbanopen_cntrst_6,No, - , - ,Northern Cardinal,Exurban open,June,-0.05973489281740565
+-0.22139616570247156,-0.6673902068805684,0.2151266965272605,exurbanopen_cntrst_7,No, - , - ,Northern Cardinal,Exurban open,July,-0.22139616570247156
+0.0681359206129481,-0.44013250401313586,0.5922044983494807,exurbanopen_cntrst_8,No, - , - ,Northern Cardinal,Exurban open,August,0.0681359206129481
+-0.030731399429463322,-0.47362544213011654,0.3780939769441428,exurbanforest_cntrst_6,No, - , - ,Northern Cardinal,Exurban forest,June,-0.030731399429463322
+-0.34204424125609034,-0.663327366648395,-0.003229576144518,exurbanforest_cntrst_7,Yes,more vocalization during extremes, - ,Northern Cardinal,Exurban forest,July,-0.34204424125609034
+0.09587900521951925,-0.29408820124211915,0.42798384606578443,exurbanforest_cntrst_8,No, - , - ,Northern Cardinal,Exurban forest,August,0.09587900521951925
+-0.04020934152777466,-1.0047863620324309,0.8169712364624107,urbanopen_cntrst_6,No, - , - ,Red-bellied Woodpecker,Urban open,June,-0.04020934152777466
+-0.5055220240658915,-1.1833117686461503,0.18503130232280615,urbanopen_cntrst_7,No, - , - ,Red-bellied Woodpecker,Urban open,July,-0.5055220240658915
+-0.8648361703300637,-1.5656622076678146,-0.20026309199201778,urbanopen_cntrst_8,Yes,more vocalization during extremes, - ,Red-bellied Woodpecker,Urban open,August,-0.8648361703300637
+1.8484818694364917,0.837745245267754,2.6991944819478206,urbanforest_cntrst_6,Yes,less vocalization during extremes, - ,Red-bellied Woodpecker,Urban forest,June,1.8484818694364917
+-0.1945364952874517,-1.0743718831140991,0.8128331413775647,urbanforest_cntrst_7,No, - , - ,Red-bellied Woodpecker,Urban forest,July,-0.1945364952874517
+0.8128669636997863,-0.26790762000809387,1.9431799388368216,urbanforest_cntrst_8,No, - , - ,Red-bellied Woodpecker,Urban forest,August,0.8128669636997863
+1.124757220715524,-0.045592324664392746,2.3186517499500776,exurbanopen_cntrst_6,No, - , - ,Red-bellied Woodpecker,Exurban open,June,1.124757220715524
+-0.715688520642054,-1.481408087496969,0.12131484866918633,exurbanopen_cntrst_7,No, - , - ,Red-bellied Woodpecker,Exurban open,July,-0.715688520642054
+0.9561550095470717,-0.013348167876426526,1.9705056783804635,exurbanopen_cntrst_8,No, - , - ,Red-bellied Woodpecker,Exurban open,August,0.9561550095470717
+1.2438752402019857,0.29615172991786803,2.2439629507845167,exurbanforest_cntrst_6,Yes,less vocalization during extremes, - ,Red-bellied Woodpecker,Exurban forest,June,1.2438752402019857
+-0.323417739235535,-0.9645252036384797,0.29414183173397523,exurbanforest_cntrst_7,No, - , - ,Red-bellied Woodpecker,Exurban forest,July,-0.323417739235535
+1.0649256008246142,0.4263286598814404,1.7332117197029973,exurbanforest_cntrst_8,Yes,less vocalization during extremes, - ,Red-bellied Woodpecker,Exurban forest,August,1.0649256008246142
+-0.19961054196644445,-0.9839888373904637,0.5322391578027579,urbanopen_cntrst_6,No, - , - ,Tufted Titmouse,Urban open,June,-0.19961054196644445
+-0.537438630754836,-1.2108888638989643,0.0848303090909957,urbanopen_cntrst_7,No, - , - ,Tufted Titmouse,Urban open,July,-0.537438630754836
+-0.4576144820643619,-1.2701330111245732,0.29543873808138726,urbanopen_cntrst_8,No, - , - ,Tufted Titmouse,Urban open,August,-0.4576144820643619
+-0.7659811286928946,-1.4675229172211637,-0.07310430856087141,urbanforest_cntrst_6,Yes,more vocalization during extremes, - ,Tufted Titmouse,Urban forest,June,-0.7659811286928946
+-0.6276438175871057,-1.3331482069389584,0.05176723367507581,urbanforest_cntrst_7,No, - , - ,Tufted Titmouse,Urban forest,July,-0.6276438175871057
+-0.5538218831163032,-1.2963996738903194,0.146232010888118,urbanforest_cntrst_8,No, - , - ,Tufted Titmouse,Urban forest,August,-0.5538218831163032
+-0.6566508997612817,-1.5637881326951577,0.16584268079776365,exurbanopen_cntrst_6,No, - , - ,Tufted Titmouse,Exurban open,June,-0.6566508997612817
+-0.566593726764058,-1.3245395461508147,0.145441149488061,exurbanopen_cntrst_7,No, - , - ,Tufted Titmouse,Exurban open,July,-0.566593726764058
+0.6576397541421422,-0.299853437799756,1.5054909861893881,exurbanopen_cntrst_8,No, - , - ,Tufted Titmouse,Exurban open,August,0.6576397541421422
+-0.2116736392675153,-0.9136617888852647,0.40118635135993386,exurbanforest_cntrst_6,No, - , - ,Tufted Titmouse,Exurban forest,June,-0.2116736392675153
+-0.7089680949990435,-1.261261885376434,-0.20607740368360278,exurbanforest_cntrst_7,Yes,more vocalization during extremes, - ,Tufted Titmouse,Exurban forest,July,-0.7089680949990435
+-0.020282092142955913,-0.6702387237908138,0.5809273698732724,exurbanforest_cntrst_8,No, - , - ,Tufted Titmouse,Exurban forest,August,-0.020282092142955913
+0.8657226149449455,-1.9578964245920696,4.406394528391453,urbanopen_cntrst_6,No, - , - ,Wood Thrush,Urban open,June,0.8657226149449455
+40.58199385905967,2.067286509210878,106.83523081578214,urbanopen_cntrst_7,Yes,less vocalization during extremes,large contrast - may be estimation issue,Wood Thrush,Urban open,July,2
+22.557412531722434,-57.285911832552145,119.38542998724398,urbanopen_cntrst_8,No, - , - ,Wood Thrush,Urban open,August,2
+2.419887076728454,0.21758877703455712,5.388156579588832,urbanforest_cntrst_6,Yes,less vocalization during extremes, - ,Wood Thrush,Urban forest,June,2
+-1.185103167908451,-3.4033746919254804,1.1320613035743714,urbanforest_cntrst_7,No, - , - ,Wood Thrush,Urban forest,July,-1.185103167908451
+42.88282165187399,-125.82927585350036,224.96012703031374,urbanforest_cntrst_8,No, - , - ,Wood Thrush,Urban forest,August,2
+0.7371518414078616,-0.5228617454118025,1.935670294412915,exurbanopen_cntrst_6,No, - , - ,Wood Thrush,Exurban open,June,0.7371518414078616
+0.037162830382606996,-0.806794154092126,0.8632246792452716,exurbanopen_cntrst_7,No, - , - ,Wood Thrush,Exurban open,July,0.037162830382606996
+0.12594413887205583,-2.7765361362052774,3.739201798499737,exurbanopen_cntrst_8,No, - , - ,Wood Thrush,Exurban open,August,0.12594413887205583
+-0.20794425134598146,-0.8951855362232937,0.48725912081732004,exurbanforest_cntrst_6,No, - , - ,Wood Thrush,Exurban forest,June,-0.20794425134598146
+-0.26366357017891345,-0.8072049721859411,0.33418391399902353,exurbanforest_cntrst_7,No, - , - ,Wood Thrush,Exurban forest,July,-0.26366357017891345
+-0.2612864155057028,-0.975645087251082,0.3473276323903008,exurbanforest_cntrst_8,No, - , - ,Wood Thrush,Exurban forest,August,-0.2612864155057028

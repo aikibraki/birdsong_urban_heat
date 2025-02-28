@@ -1,0 +1,12 @@
+﻿species,habitat,body_mass_g,nest_loc,migratory_habit,feeding_behavior,trophic_niche,range_size_km2
+American Goldfinch,Open woodland,12.8,Shrub,Shortdist,Foliage gleaner,Granivore,7802444.22
+American Robin,Open woodland,78.783,Tree,Shortdist,Ground forager,Invertivore,16457967.86
+Blue Jay,Forest,85.25,Tree,Shortdist,Ground forager,Omnivore,6665383.16
+Carolina Chickadee,Forest,10.25,Cavity,Resident,Foliage gleaner,Invertivore,2312694.52
+Carolina Wren,Open woodland,19.57,Cavity,Resident,Ground forager,Invertivore,3040027.22
+Eastern Towhee,Scrub,40.3,Ground,Shortdist,Ground forager,Omnivore,3162018.06
+Hairy Woodpecker,Forest,65.875,Cavity,Resident,Bark forager,Invertivore,13332874.44
+Northern Cardinal,Open woodland,43.05,Shrub,Resident,Ground forager,Omnivore,5834572.06
+Red-bellied Woodpecker,Forest,71.78,Cavity,Resident,Bark forager,Omnivore,3074161.82
+Tufted Titmouse,Forest,21.6,Cavity,Resident,Foliage gleaner,Invertivore,2969712.5
+Wood Thrush,Forest,48.65,Tree,Neotrop,Ground forager,Invertivore,3494414.7
