@@ -20,7 +20,7 @@ library(ggplot2)
 theme_set(theme_bw())
 
 # load custom helper functions
-source("R code_working/bird_mod_functions.R")
+source("R code/bird_mod_functions.R")
 
 #Load temperature and soundscape data
 dat <- read.csv("Data/analysis_data/temp_soundscape_bird_data_2024_dial_summaries_12.11.24.csv") #diel summaries of bird detections filtered by confidence thresholds

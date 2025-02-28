@@ -244,9 +244,9 @@ dim(sites_birds) #782470     26
 length(unique(sites_birds$recording_ID)) #344223
 
 summary(as.factor(sites_birds$common_name))
-# American Goldfinch         American Robin               Blue Jay     Carolina Chickadee 
+# American Goldfinch      American Robin        Blue Jay     Carolina Chickadee 
 # 22952                  86641                  56089                   7680 
-# Carolina Wren      Northern Cardinal Red-bellied Woodpecker        Tufted Titmouse 
+# Carolina Wren      Northern Cardinal    Red-bellied Woodpecker        Tufted Titmouse 
 # 94963                 203207                  26469                  46409 
 # NA's 
 # 238060 
@@ -267,7 +267,7 @@ str(sites_birds_s) #536844 obs. of  26 variables
 summary(as.factor(sites_birds_s$common_name))
 # American Goldfinch         American Robin               Blue Jay     Carolina Chickadee 
 # 16959                  56280                  44390                   4246 
-# Carolina Wren      Northern Cardinal Red-bellied Woodpecker        Tufted Titmouse 
+# Carolina Wren      Northern Cardinal    Red-bellied Woodpecker        Tufted Titmouse 
 # 60040                 134678                  15196                  18177 
 # NA's 
 # 186878 
@@ -375,10 +375,10 @@ str(gdat) #536844 obs. of  34 variables
 # Tufted Titmouse	       0.23	          850
 
 summary(as.factor(gdat$common_name))
-# American Goldfinch         American Robin               Blue Jay     Carolina Chickadee 
-# 16959                  56280                  44390                   4246 
-# Carolina Wren      Northern Cardinal Red-bellied Woodpecker        Tufted Titmouse 
-# 60040                 134678                  15196                  18177 
+# American Goldfinch    American Robin        Blue Jay                   Carolina Chickadee 
+# 16959                 56280                 44390                      4246 
+# Carolina Wren         Northern Cardinal     Red-bellied Woodpecker     Tufted Titmouse 
+# 60040                 134678                15196                      18177 
 # NA's 
 # 186878 
 

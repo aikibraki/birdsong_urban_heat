@@ -18,8 +18,13 @@ ddat <- read.csv("Data/cleaned_drop_data/drop_data_may_sept_2024_24hrs_11.10.24.
 dim(ddat) #303402     24
 
 #Load microclimate summary data (means, max, min, etc)
-ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_11.10.24.csv")
-dim(ddat_sum) #2013   20
+# ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_daytime_summaries_11.10.24.csv")
+# dim(ddat_sum) #2013   20
+
+ddat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv")
+ddat_sum <- ddat_sum %>% 
+  filter(day_night == "day")
+dim(ddat_sum) #2013  29
 
 # dndat_sum <- read.csv("Data/cleaned_drop_data/drop_data_2024_day_night_summaries_11.23.24.csv")
 # dim(dndat_sum) #4042   21
@@ -550,3 +555,26 @@ dev.off()
 
 
 
+
+
+# testing -- AK -----------------------------------------------------------------
+
+ddat_sum_sl <- ddat_sum %>%
+  filter(sites %in% c("Open1_SLO1", "Forest2_SLF2", "Forest3_SLR3"))
+dim(ddat_sum_sl) #309  29
+
+ddat_ext_sum_sl <- ddat_sum_sl %>%
+  filter(ext_95 == 1 | ext_max == 1 | ext_95_day == 1 | ext_max_day == 1) %>%
+  select(date_orig, habitat, ext_95, ext_max, ext_95_day, ext_max_day) %>%
+  arrange(date_orig, habitat)
+
+ddat_summary <- ddat_ext_sum_sl %>%
+  group_by(habitat) %>%
+  summarize(
+    ext_95_count = sum(ext_95),
+    ext_max_count = sum(ext_max),
+    ext_95_day_count = sum(ext_95_day),
+    ext_max_day_count = sum(ext_max_day)
+  ) %>%
+  filter(ext_95_count > 0 | ext_max_count > 0 | 
+           ext_95_day_count > 0 | ext_max_day_count > 0)

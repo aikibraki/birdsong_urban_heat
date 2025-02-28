@@ -43,7 +43,7 @@ library(lubridate) #lubridate_1.9.2
 
 
 #Load metadata files
-meta_dat <- read.csv("audiomoth_metadata_2024/SciFaith_Drop_metadata.csv")
+meta_dat <- read.csv("Data/audiomoth_data_2024/SciFaith_Drop_metadata.csv")
 dim(meta_dat) #264  12
 #date_out <- read.csv("data/TOMST data/SERC_downloaded_Fall 2023/SERC_TMS4_datacollection_coords_Fall2023.csv")
 #sens_ids <- read.csv("data/TOMST data/SERCsensorIDs.csv")

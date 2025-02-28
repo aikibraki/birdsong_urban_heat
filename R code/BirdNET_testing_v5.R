@@ -1,4 +1,4 @@
-# Packages -----------------------------------------------------------------
+# Packages -----------------------------------------------------------------------
 
 # Code to install NSNSDAcoustics for the first time
 # usethis::create_github_token()
@@ -24,7 +24,7 @@ library(tidyverse)
 # library(ggplot2)
 
 
-# Format the .wav file titles ------------------------------------------
+# Format the .wav file titles ----------------------------------------------------
 # Do this before running through BirdNET Analyzer
 # wav files follow a SITEID_YYYYMMDD_HHMMSS naming convention
 
@@ -39,7 +39,7 @@ file.rename(list.files(pattern = '2024'),
                         pattern = '2024', 'SERC_2024')
             )
 
-# Format and Gather the formatted results ---------------------------------
+# Format and Gather the formatted results ----------------------------------------
 
 setwd("F:/Science and Faith Audio Files")
 
@@ -78,7 +78,7 @@ formatted.results <- birdnet_gather(results.directory = results_path_fm,
                                     formatted = TRUE)
 
 
-# VALIDATION PIPELINE MK.2 -------------------------------------------------
+# VALIDATION PIPELINE MK.2 -------------------------------------------------------
 
 # Function to get deployment folders
 get_deployment_folders <- function(base_path) {
@@ -94,27 +94,29 @@ get_deployment_folders <- function(base_path) {
 }
 
 # Update this for each site
-base_path <- "D:/Science and Faith Audio Files/SERC/NEON017_N17"
+base_path <- "D:/Science and Faith Audio Files/StLukes/Open1_SLO1"
 
 # Get deployment folders
 all_deployments <- get_deployment_folders(base_path)
 
 
-## First pass results ------------------------------------------------------
+## First pass results ------------------------------------------------------------
 # first pass is for scrubbing human voices
 
 all_results_p1 <- data.frame()
 
 # Process each deployment
 for (deployment in all_deployments) {
-  results_path <- file.path(deployment, "results_formatted")
+  results_path <- file.path(deployment, 
+                            "results_formatted")
   # Check if the results folder exists
   if (dir.exists(results_path)) {
     # Gather results for this deployment
-    formatted_results <- birdnet_gather(results.directory = results_path, formatted = TRUE)
+    formatted_results <- birdnet_gather(results.directory = results_path, 
+                                        formatted = TRUE)
     # Add deployment info
     formatted_results$deployment <- basename(deployment)
-    # Append to all_results_p2
+    # Append to all_results_p1
     all_results_p1 <- rbind(all_results_p1, formatted_results)
   }
 }
@@ -135,7 +137,7 @@ rm(formatted_results)
 filt_p1_1 <- all_results_p1[all_results_p1$confidence >= 0.1, ]
 
 
-## Second pass results -----------------------------------------------------
+## Second pass results -----------------------------------------------------------
 
 all_results_p2 <- data.frame()
 
@@ -145,7 +147,8 @@ for (deployment in all_deployments) {
   # Check if the results folder exists
   if (dir.exists(results_path2)) {
     # Gather results for this deployment
-    formatted_results <- birdnet_gather(results.directory = results_path2, formatted = TRUE)
+    formatted_results <- birdnet_gather(results.directory = results_path2, 
+                                        formatted = TRUE)
     # Add deployment info
     formatted_results$deployment <- basename(deployment)
     # Append to all_results_p2
@@ -168,7 +171,7 @@ rm(formatted_results)
 # Filter by confidence >= 0.1 (also removes NAs)
 filt_p2_1 <- all_results_p2[all_results_p2$confidence >= 0.1, ]
 
-## Human Voice Scrubbing ---------------------------------------------------
+## Human Voice Scrubbing ---------------------------------------------------------
 # TODO : have filt_h.1 pull filepath-start/end combos to limit loss of detections for validation
 
 # make a vector filt_g.1 with all the filepaths w/ a human vocal detection
@@ -191,7 +194,7 @@ species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 
 #write_csv(species_filt, "Data/filtered_counts/SLR3filt.csv")
 
-## Validate Results --------------------------------------------------------
+## Validate Results --------------------------------------------------------------
 # Create a random sample of N detections to verify
 
 # NOCA - DONE
@@ -202,13 +205,16 @@ species_filt <- count(filt_h.1, filt_h.1$common_name, sort = TRUE)
 # AGOL - DONE
 # RBWO - DONE
 # BLJA - DONE
-# PIWO - in progress
+# PIWO - do not use - not confident in difference from Northern Flicker
+# EATO - DONE
+# HAWO - DONE
+# WOTH - DONE
 
 # the files update with all previous species' validations, so need to use most recent:
-# use CACH files for urban sites, and PIWO for SERC sites
+# use CACH files for urban sites, and WOTH for SERC sites
 
 set.seed(4)
-to_verify <- filt_h.1[common_name == "Pileated Woodpecker"][sample(.N, 50)]
+to_verify <- filt_h.1[common_name == "Wood Thrush"][sample(.N, 50)]
 
 # Create a verification library
 ver_lib <- c('y', 'n', 'unsure')
@@ -219,9 +225,6 @@ results_directories <- dirname(to_verify$resultspath)
 
 # Create list to hold validation results
 verification_results <- vector("list", nrow(to_verify))
-
-# Ensure you don't have to hunt down each temp audio file
-setwd("Data/validation_results_files")
 
 ## birdnet_verify ##
 for (i in 1:nrow(to_verify)) {
@@ -263,11 +266,10 @@ for (i in 1:nrow(to_verify)) {
 ### FIXME so it updates one spreadsheet instead of a new one for each species
 # maybe it already kinda does
 setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/birdsong_heat_project_Aidan")
-write_csv(all_results_p2, "Data/validation_results_files/PIWO/N17results_PIWO.csv")
+write_csv(all_results_p2, "Data/validation_results_files/WOTH/MC1results_WOTH.csv")
 1+1
-## Set Confidence Thresholds -----------------------------------------------
-setwd("Data/validation_results_files/CACH")
-
+## Set Confidence Thresholds -----------------------------------------------------
+setwd("C:/Users/kirchgrabera/Smithsonian Dropbox/Aidan Kirchgraber/Science and Faith/Aidan/birdsong_heat_project_Aidan/Data/validation_results_files/CACH")
 temp = list.files(pattern = "*.csv")
 
 col_types = cols( # this will ensure 'verify' is not imported as bool, which loses data
@@ -316,7 +318,7 @@ threshold_list <- lapply(results_list, function(df) {
 })
 
 
-# Pooled Confidence Thresholds --------------------------------------------
+## Pooled Confidence Thresholds --------------------------------------------------
 
 # Combine each site's results into one dataframe 
 pool_data <- bind_rows(lil_data, .id = "column_label")
@@ -367,7 +369,7 @@ cach2 <- table(cach1$column_label)
 # 9 Tufted Titmouse        0.22-0.23                  850
 
 
-# Counts by site ----------------------------------------------------------
+# Counts by site -----------------------------------------------------------------
 
 counts_dir <- 'Data/filtered_counts'
 
@@ -420,9 +422,149 @@ all_site_wide <- all_site_data %>%
 print(all_site_wide)
 
 #write_csv(all_site_wide, "Data/serc_bird_detections.csv")
+colSums(all_site_wide != 0)
 
-# Boneyard -----------------------------------------------------------------
-## Species counts ----------------------------------------------------------
+# Liberty Grace Summary Stats ----------------------------------------------------
+## BIRD summary stats ------------------------------------------------------------
+libgrace_site_data <-  all_site_data %>%
+  filter(site == "LGB1filt")
+
+libgrace_wide <- libgrace_site_data %>%
+  pivot_wider(
+    names_from = site, 
+    values_from = detections, 
+    values_fill = 0  # Fill missing values with 0 if a species is not detected in a site
+  ) %>%
+  select(species, LGB1filt)
+
+## FROG summary stats ------------------------------------------------------------
+
+# Gather and combine Liberty Grace Data
+# Define list of site paths
+sites <- c("Back_LGB1")
+base_paths <- file.path("D:/Science and Faith Audio Files/LibertyGrace", sites)
+
+# Make a df with all the Liberty Grace Data
+lg_results <- do.call(rbind, lapply(base_paths, function(base_path) {
+  deployments <- get_deployment_folders(base_path)
+  site_results <- do.call(rbind, lapply(deployments, function(deployment) {
+    results_path <- file.path(deployment, "results_formatted")
+    if (dir.exists(results_path)) {
+      results <- birdnet_gather(results.directory = results_path, formatted = TRUE)
+      return(results)
+    }
+  }))
+  return(site_results)
+}))
+
+# Get species counts
+lg_counts <- lg_results %>%
+  group_by(common_name) %>%
+  summarise(count = n(), .groups = 'drop')
+sum(libgrace_wide$LGB1filt)
+
+# St. Luke's Summary Stats -------------------------------------------------------
+## BIRD summary stats ------------------------------------------------------------
+stlukes_site_data <-  all_site_data %>%
+  filter(site == c("SLO1filt", "SLF2filt", "SLR3filt"))
+
+stlukes_wide <- stlukes_site_data %>%
+  pivot_wider(
+    names_from = site, 
+    values_from = detections, 
+    values_fill = 0  # Fill missing values with 0 if a species is not detected in a site
+  )
+
+stlukes_concise <- stlukes_wide %>%
+  mutate(sl_total = SLO1filt+SLF2filt+SLR3filt) %>%
+  select(species, sl_total)
+
+## FROG summary stats ------------------------------------------------------------
+
+# Gather and combine St.Luke's Data
+# Define list of site paths
+sites <- c("Open1_SLO1", "Forest2_SLF2", "Forest3_SLR3")
+base_paths <- file.path("D:/Science and Faith Audio Files/StLukes", sites)
+
+# Make a df with all the St.Luke's Data
+sl_results <- do.call(rbind, lapply(base_paths, function(base_path) {
+  deployments <- get_deployment_folders(base_path)
+  site_results <- do.call(rbind, lapply(deployments, function(deployment) {
+    results_path <- file.path(deployment, "results_formatted")
+    if (dir.exists(results_path)) {
+      results <- birdnet_gather(results.directory = results_path, formatted = TRUE)
+      return(results)
+    }
+  }))
+  return(site_results)
+}))
+
+# Get species counts
+sl_counts <- sl_results %>%
+  group_by(common_name) %>%
+  summarise(count = n(), .groups = 'drop')
+
+
+
+# Sweet Hope Summary Stats -------------------------------------------------------
+## BIRD summary stats ------------------------------------------------------------
+sweethope_site_data <-  all_site_data %>%
+  filter(site == "SH4filt")
+
+sweethope_wide <- sweethope_site_data %>%
+  pivot_wider(
+    names_from = site, 
+    values_from = detections, 
+    values_fill = 0  # Fill missing values with 0 if a species is not detected in a site
+  ) %>%
+  select(species, SH4filt)
+
+## FROG summary stats ------------------------------------------------------------
+
+# Gather and combine Sweet Hope Data
+# Define list of site paths
+sites <- c("SweetHope_SH4")
+base_paths <- file.path("D:/Science and Faith Audio Files/SweetHope", sites)
+
+# Make a df with all the Sweet Hope Data
+sh_results <- do.call(rbind, lapply(base_paths, function(base_path) {
+  deployments <- get_deployment_folders(base_path)
+  site_results <- do.call(rbind, lapply(deployments, function(deployment) {
+    results_path <- file.path(deployment, "results_formatted")
+    if (dir.exists(results_path)) {
+      results <- birdnet_gather(results.directory = results_path, formatted = TRUE)
+      return(results)
+    }
+  }))
+  return(site_results)
+}))
+
+# Get species counts
+sh_counts <- sh_results %>%
+  group_by(common_name) %>%
+  summarise(count = n(), .groups = 'drop')
+
+# Testing spectrogram generation for presentation --------------------------------
+library(seewave)
+library(tuneR)
+# Import your audio file (replace with your file path)
+test_call <- readWave("D:/Science and Faith Audio Files/SERC/NEON008_N8/SD_B/20240605/SERC_20240509_103000.WAV")
+test_call <- cutw(test_call, from = 24, to = 26, output = "Wave")
+# Create a basic spectrogram
+spectro(test_call, 
+        wl = 400,        # Window length
+        #ovlp = 75,       # Overlap between windows (%)
+        collevels = seq(-40, 0, 0.5),  # Color levels
+        noisereduction = 1,
+        palette = reverse.topo.colors, # Color palette
+        osc = FALSE,    # Oscillogram
+        scale = FALSE,  # Don't show color scale
+        fastdisp = TRUE,
+        main = "Bird Call Spectrogram")
+
+
+# Boneyard -----------------------------------------------------------------------
+## Species counts ----------------------------------------------------------------
 
 # filter by confidence >= 0.1, 0.2, and 0.3
 filt.1 <- filter(formatted.results, confidence >= 0.1)
@@ -434,7 +576,7 @@ species.1 <- count(filt.1, filt.1$common_name, sort = TRUE)
 species.2 <- count(filt.2, filt.2$common_name, sort = TRUE)
 species.3 <- count(filt.3, filt.3$common_name, sort = TRUE)
 
-## Scrub human voices -------------------------------------------------------
+## Scrub human voices ------------------------------------------------------------
 setwd(audio_path)
 
 # make a vector filt_g.1 with all the filepaths w/ a human vocal detection
@@ -449,7 +591,7 @@ filt_h.1 <- filt.1 %>%
 # Note:
 # currently this is removing ALL entries with human voice detections at ANY confidence level
 
-## VALIDATION PIPELINE MK.1 ------------------------------------------------
+## VALIDATION PIPELINE MK.1 ------------------------------------------------------
 
 # Create a random sample of N detections to verify
 set.seed(4)
@@ -520,7 +662,7 @@ verify_subset_0.1 <- verified_0.1 %>% count(common_name, verify)
 verify_subset_0.2 <- verified_0.2 %>% count(common_name, verify)
 verify_subset_0.3 <- verified_0.3 %>% count(common_name, verify)
 
-## Plot the verifications --------------------------------------------------
+## Plot the verifications --------------------------------------------------------
 
 # Plot of yes/no/unsure by species and confidence at >=0.1 confidence
 ggplot(verified_0.1, aes(fill=verify, y=confidence, x=common_name)) + 
